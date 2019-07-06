@@ -1,0 +1,51 @@
+const Product = require('../models/Product');
+
+exports.getProducts = async function(req, res) {
+  const product = new Product()
+  data = await product.getAll()
+  return res.send(data)
+};
+
+exports.getProduct = async function(req, res) {
+  const product = new Product()
+  data = await product.get(parseInt(req.params.id))
+  if (data) {
+    return res.send(data)
+  } else {
+    return res.send("No product found!")
+  }
+};
+
+exports.addProduct = function(req, res) {
+  const product = new Product()
+  const body = []
+  req.on('data', chunk => {
+    body.push(chunk)
+  })
+  req.on('end', async () => {
+    const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+    data = await product.save(parsedBody)
+    return res.send(data)
+  })
+};
+
+exports.updateProduct = function(req, res) {
+  const id = parseInt(req.params.id)
+  const product = new Product()
+  const body = []
+  req.on('data', chunk => {
+    body.push(chunk)
+  })
+  req.on('end', async () => {
+    const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+    data = await product.update(parsedBody, id)
+    return res.send(data)
+  })
+};
+
+exports.deleteProduct = async function(req, res) {
+  const id = parseInt(req.params.id)
+  const product = new Product()
+  data = await product.delete(id)
+  return res.send(data)
+};

@@ -1,0 +1,8 @@
+extends layouts/app.pug
+
+block content
+  if messages.length > 0
+    each message in messages
+      h2.style= message
+  else
+    h1.style2 No messages to display

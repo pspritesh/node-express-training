@@ -1,0 +1,16 @@
+.style {
+  background-color: aqua !important;
+  color: blue !important;
+  text-align: center;
+}
+
+.style2 {
+  background-color: yellow !important;
+  color: red !important;
+  text-align: center;
+}
+
+.header {
+  background-color: lime !important;
+  color: green !important;
+}

@@ -1,0 +1,11 @@
+<%- include('layouts/app.ejs') %>
+  </head>
+  <body>
+    <% if (messages.length > 0) { %>
+      <% messages.foreach %>
+        <h2 class="style"><%= message %></h2>
+    <% } else { %>
+      <h1 class="style2">No messages to display</h1>
+    <% } %>
+  </body>
+</html>
