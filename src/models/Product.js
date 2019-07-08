@@ -10,7 +10,7 @@ module.exports = class Product {
     )
   }
 
-  getDataFromProduct(cb, reject) {
+  readProduct(cb, reject) {
     fs.readFile(this.filePath(), (err, fileContent) => {
       let data = []
       if (!err) {
@@ -33,43 +33,37 @@ module.exports = class Product {
   }
 
   getAll() {
-    let output = []
-    const readingFile = (resolve, reject) => {
-      this.getDataFromProduct(data => {
+    return new Promise((resolve, reject) => {
+      let output = []
+      this.readProduct(data => {
         output.push(data)
         resolve(output);
       }, reject)
-    };
-
-    return new Promise(readingFile);
+    });
   }
 
   get(id) {
-    const readingFile = (resolve, reject) => {
-      this.getDataFromProduct(data => {
+    return new Promise((resolve, reject) => {
+      this.readProduct(data => {
         const product = data.find(p => p.id === id)
         resolve(product);
       }, reject)
-    };
-
-    return new Promise(readingFile);
+    });
   }
 
   save(product) {
-    const addProduct = (resolve, reject) => {
-      this.getDataFromProduct(data => {
+    return new Promise((resolve, reject) => {
+      this.readProduct(data => {
         product.id = Math.floor(Math.random()*100)
         data.push(product)
         this.writeProduct(data, reject, () => resolve("Product added successfully!"))
       }, reject)
-    };
-
-    return new Promise(addProduct);
+    });
   }
 
   update(product, id) {
     const updateProduct = (resolve, reject) => {
-      this.getDataFromProduct(data => {
+      this.readProduct(data => {
         const product_old = data.find(p => p.id === id)
         if (product_old) {
           product.id = product_old.id
@@ -91,7 +85,7 @@ module.exports = class Product {
 
   delete(id) {
     return new Promise((resolve, reject) => {
-      this.getDataFromProduct(data => {
+      this.readProduct(data => {
         const product_old = data.find(p => p.id === id)
         if (product_old) {
           data.pop(product_old)
