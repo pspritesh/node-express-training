@@ -65,11 +65,12 @@ module.exports = class Product {
     const updateProduct = (resolve, reject) => {
       this.readProduct(data => {
         const product_old = data.find(p => p.id === id)
+        const product_new = {...product}
         if (product_old) {
-          product.id = product_old.id
+          product_new.id = product_old.id
           for (var i in data) {
             if (data[i].id == product_old.id) {
-              data[i] = product;
+              data[i] = product_new;
               break;
             }
           }
