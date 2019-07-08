@@ -45,7 +45,6 @@ exports.addProduct = function(req, res) {
 };
 
 exports.updateProduct = function(req, res) {
-  const id = parseInt(req.params.id)
   const product = new Product()
   const body = []
   try {
@@ -54,7 +53,7 @@ exports.updateProduct = function(req, res) {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      data = await product.update(parsedBody, id)
+      data = await product.update(parsedBody, parseInt(req.params.id))
       return res.send(data)
     })
   } catch (error) {
@@ -64,10 +63,9 @@ exports.updateProduct = function(req, res) {
 };
 
 exports.deleteProduct = async function(req, res) {
-  const id = parseInt(req.params.id)
   const product = new Product()
   try {
-    data = await product.delete(id)
+    data = await product.delete(parseInt(req.params.id))
     return res.send(data)
   } catch (error) {
     console.log(error)
