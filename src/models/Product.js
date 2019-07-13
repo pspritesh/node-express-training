@@ -81,10 +81,8 @@ module.exports = class Product {
   delete(id) {
     return new Promise((resolve, reject) => {
       this.readProduct(data => {
-        const product_old = data.find(p => p.id === id)
-        if (product_old) {
-          data.pop(product_old)
-          this.writeProduct(data, reject, () => resolve("Product deleted successfully!"))
+        if (data.find(p => p.id === id)) {
+          this.writeProduct(data.filter(p => p.id !== id), reject, () => resolve("Product deleted successfully!"))
         } else {
           resolve("Nothing to delete!")
         }
