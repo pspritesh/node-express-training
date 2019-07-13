@@ -64,16 +64,10 @@ module.exports = class Product {
   update(product, id) {
     const updateProduct = (resolve, reject) => {
       this.readProduct(data => {
-        const product_old = data.find(p => p.id === id)
-        const product_new = {...product}
-        if (product_old) {
-          product_new.id = product_old.id
-          for (var i in data) {
-            if (data[i].id == product_old.id) {
-              data[i] = product_new;
-              break;
-            }
-          }
+        const old_product = data.findIndex(p => p.id === id)
+        if (old_product) {
+          product.id = data[old_product].id
+          data[old_product] = product;
           this.writeProduct(data, reject, () => resolve("Product updated successfully!"))
         } else {
           resolve("Nothing to update!")
