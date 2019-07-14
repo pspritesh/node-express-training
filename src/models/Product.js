@@ -25,7 +25,7 @@ module.exports = class Product {
   writeProduct(data, reject, cb) {
     fs.writeFile(this.filePath(), JSON.stringify(data), (err) => {
       if (err) {
-        console.log(err)
+        console.error(err)
         reject("Something went wrong!")
       }
       cb()

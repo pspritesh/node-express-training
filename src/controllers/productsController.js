@@ -6,7 +6,7 @@ exports.getProducts = async function(req, res) {
     data = await product.getAll()
     return res.send(data)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return res.send("Something went wrong!")
   }
 };
@@ -21,7 +21,7 @@ exports.getProduct = async function(req, res) {
       return res.send("No product found!")
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return res.send("Something went wrong!")
   }
 };
@@ -39,7 +39,7 @@ exports.addProduct = function(req, res) {
       return res.send(data)
     })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return res.send("Something went wrong!")
   }
 };
@@ -57,7 +57,7 @@ exports.updateProduct = function(req, res) {
       return res.send(data)
     })
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return res.send("Something went wrong!")
   }
 };
@@ -68,7 +68,7 @@ exports.deleteProduct = async function(req, res) {
     data = await product.delete(parseInt(req.params.id))
     return res.send(data)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return res.send("Something went wrong!")
   }
 };

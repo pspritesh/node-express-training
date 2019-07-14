@@ -10,7 +10,9 @@ app.set('port', process.env.PORT || 3000);
 app.set('title', 'My 1st App');
 app.set('query parser', `extended`);
 
-app.set('views', path.join(__dirname, '/src/views'));
+// Define the path where views are stored
+app.set('views', path.join(__dirname, './src/views'));
+// Define templating engine for app
 app.set("view engine", "pug");
 
 app.use(function (req, res, next) {
@@ -33,6 +35,7 @@ app.set('etag', 'strong');
 // Handles routes in the app
 app.use(routes);
 
+// Handles 404 requests
 app.use(error404Controller.error404);
 
 /* eslint-disable no-unused-vars */
