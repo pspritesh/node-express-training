@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const routes = require('./src/routes/routes');
 const error404Controller = require('./src/controllers/error404Controller');
+const sequelize = require('./src/utils/database2');
 const app = express();
 
 app.set('port', process.env.PORT || 3000);
@@ -45,6 +46,11 @@ app.use(function(err, req, res, next) {
 });
 /* eslint-enable no-unused-vars */
 
-app.listen(app.get('port'), () => {
-  console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console
-});
+// creates tables using models which are defined using sequelize into database if they doesn't exist
+sequelize.sync()
+  .then(result => {
+    app.listen(app.get('port'), () => {
+      console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console
+    });
+  })
+  .catch(err => console.log(err))
