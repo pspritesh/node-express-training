@@ -1,11 +1,10 @@
 const express = require('express');
 const path = require('path');
-const routes = require('./src/routes/routes');
-const error404Controller = require('./src/controllers/error404Controller');
-const sequelize = require('./src/utils/database2');
 const app = express();
-
-app.set('port', process.env.PORT || 3000);
+require('dotenv').config();
+const error404Controller = require('./src/controllers/error404Controller');
+const routes = require('./src/routes/routes');
+const sequelize = require('./src/config/dbconfig2');
 
 // Best practices app settings
 app.set('title', 'My 1st App');
@@ -50,7 +49,7 @@ app.use(function(err, req, res, next) {
 sequelize.sync()
   .then(result => {
     app.listen(app.get('port'), () => {
-      console.log(`Find the server at: http://localhost:${app.get('port')}/`); // eslint-disable-line no-console
+      console.log(`Find the server at: http://localhost:${process.env.APP_PORT}/`); // eslint-disable-line no-console
     });
   })
   .catch(err => console.log(err))
