@@ -11,7 +11,7 @@ const Product = require('./src/models/ProductSequelize');
 const User = require('./src/models/UserSequelize');
 
 // Best practices app settings
-app.set('title', 'My 1st App');
+app.set('title', process.env.APP_NAME);
 app.set('query parser', `extended`);
 
 // Define the path where views are stored
@@ -57,7 +57,7 @@ User.hasMany(Product)
 sequelize.sync()
   .then(result => {
     app.listen(process.env.APP_PORT, () => {
-      console.log(`Find the server at: http://localhost:${process.env.APP_PORT}/`); // eslint-disable-line no-console
+      console.log(`Find the server at: ${process.env.APP_URL}`); // eslint-disable-line no-console
     });
   })
   .catch(err => console.log(err))
