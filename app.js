@@ -54,6 +54,7 @@ Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
 User.hasMany(Product)
 
 // creates tables using models which are defined using sequelize into database if they doesn't exist
+// sequelize.sync({force:true})
 sequelize.sync()
   .then(result => {
     app.listen(process.env.APP_PORT, () => {

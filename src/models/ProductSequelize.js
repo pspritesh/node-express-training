@@ -20,7 +20,9 @@ const Product = sequelize.define('product', {
   price: {
     type: Sequelize.DOUBLE,
     allowNull: false
-  }
+  },
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 });
 
 module.exports = Product
