@@ -1,28 +1,28 @@
 const Sequelize = require('sequelize')
 
-const sequelize = require('../config/dbconfig2')
+const sequelize = require('../../config/dbconfig2')
 
-const Product = sequelize.define('product', {
+const Profile = sequelize.define('profile', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true
   },
-  name: {
+  fname: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  description: {
+  mname: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  price: {
-    type: Sequelize.DOUBLE,
+  lname: {
+    type: Sequelize.STRING,
     allowNull: false
   },
   createdAt: Sequelize.DATE,
   updatedAt: Sequelize.DATE
 });
 
-module.exports = Product
+module.exports = Profile

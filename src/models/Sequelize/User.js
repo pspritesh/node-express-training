@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-const sequelize = require('../config/dbconfig2')
+const sequelize = require('../../config/dbconfig2')
 
 const User = sequelize.define('user', {
   id: {
@@ -8,18 +8,6 @@ const User = sequelize.define('user', {
     autoIncrement: true,
     allowNull: false,
     primaryKey: true
-  },
-  fname: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  mname: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  lname: {
-    type: Sequelize.STRING,
-    allowNull: false
   },
   username: {
     type: Sequelize.STRING,

@@ -6,9 +6,13 @@ require('dotenv').config();
 // Custom modules
 const error404Controller = require('./src/controllers/error404Controller');
 const routes = require('./src/routes/routes');
+
+// Sequelize imports
 const sequelize = require('./src/config/dbconfig2');
-const Product = require('./src/models/ProductSequelize');
-const User = require('./src/models/UserSequelize');
+const Product = require('./src/models/Sequelize/Product');
+const Profile = require('./src/models/Sequelize/Profile');
+const User = require('./src/models/Sequelize/User');
+const UserProducts = require('./src/models/Sequelize/UserProducts');
 
 // Best practices app settings
 app.set('title', process.env.APP_NAME);
@@ -49,12 +53,20 @@ app.use(function(err, req, res, next) {
 });
 /* eslint-enable no-unused-vars */
 
-// One-To-One relationship
-Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
-User.hasMany(Product)
+// Sequelize One-To-One relationship
+User.hasOne(Profile)
+Profile.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
 
-// creates tables using models which are defined using sequelize into database if they doesn't exist
-// sequelize.sync({force:true})
+// Sequelize One-To-Many relationship
+// User.hasMany(Product)
+// Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
+
+// Sequelize Many-To-Many relationship
+User.belongsToMany(Product, {through: UserProducts})
+Product.belongsToMany(User, {through: UserProducts})
+
+// Sequelize creates missing tables if they don't exist into database using sequelize models
+// sequelize.sync({force:true})                       // Sequelize forcefully dumps all tables and recreates them again
 sequelize.sync()
   .then(result => {
     app.listen(process.env.APP_PORT, () => {

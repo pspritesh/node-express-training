@@ -30,6 +30,9 @@ router.post('/usersequelize', userSequelizeController.addUser)
 router.put('/usersequelize/:id', userSequelizeController.updateUser)
 router.delete('/usersequelize/:id', userSequelizeController.deleteUser)
 
+router.get('/usersequelize/:id/mtm', userSequelizeController.getProduct)
+router.post('/usersequelize/:id/mtm', userSequelizeController.addProduct)
+
 router.get('/', (req, res) => res.send("<h1>My 1st Express app.</h1>"))
 
 module.exports = router
