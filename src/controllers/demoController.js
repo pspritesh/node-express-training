@@ -1,4 +1,4 @@
-const Data = require('../models/Data');
+const Data = require('../models/FileDB/Data');
 
 exports.index = function(req, res) {
   res.send('Controller demo method.');

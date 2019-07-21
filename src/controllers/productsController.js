@@ -1,4 +1,4 @@
-const Product = require('../models/Product');
+const Product = require('../models/FileDB/Product');
 
 exports.getProducts = async function(req, res) {
   const product = new Product()

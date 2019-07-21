@@ -1,4 +1,4 @@
-const UserMySQL = require('../models/UserMySQL');
+const UserMySQL = require('../models/MySQL/UserMySQL');
 
 exports.getUsers = async (req, res) => {
   const user = new UserMySQL()
