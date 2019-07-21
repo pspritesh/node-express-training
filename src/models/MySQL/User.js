@@ -1,4 +1,4 @@
-const db = require('../../config/dbconfig')
+const db = require('../../config/dbconfig/MySQLDB')
 
 module.exports = class User {
   getAll() {

@@ -8,7 +8,7 @@ const error404Controller = require('./src/controllers/error404Controller');
 const routes = require('./src/routes/routes');
 
 /* Sequelize imports */
-const sequelize = require('./src/config/dbconfig2');
+const sequelize = require('./src/config/dbconfig/SequelizeDB');
 const Product = require('./src/models/Sequelize/Product');
 const Profile = require('./src/models/Sequelize/Profile');
 const User = require('./src/models/Sequelize/User');
