@@ -1,6 +1,6 @@
 const db = require('../../config/dbconfig')
 
-module.exports = class UserMySQL {
+module.exports = class User {
   getAll() {
     return db.execute('SELECT * FROM users')
   }

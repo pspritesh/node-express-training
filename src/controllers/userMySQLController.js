@@ -1,7 +1,7 @@
-const UserMySQL = require('../models/MySQL/UserMySQL');
+const User = require('../models/MySQL/User');
 
 exports.getUsers = async (req, res) => {
-  const user = new UserMySQL()
+  const user = new User()
   try {
     data = await user.getAll()
     return res.send(data[0].length ? data[0] : 'No users found!')
@@ -12,7 +12,7 @@ exports.getUsers = async (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-  const user = new UserMySQL()
+  const user = new User()
   try {
     data = await user.get(parseInt(req.params.id))
     return res.send(data[0].length ? data[0] : 'User not found!')
@@ -23,7 +23,7 @@ exports.getUser = async (req, res) => {
 }
 
 exports.addUser = async (req, res) => {
-  const user = new UserMySQL()
+  const user = new User()
   const body = []
   try {
     req.on('data', chunk => {
@@ -41,7 +41,7 @@ exports.addUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-  const user = new UserMySQL()
+  const user = new User()
   const body = []
   try {
     req.on('data', chunk => {
@@ -59,7 +59,7 @@ exports.updateUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
-  const user = new UserMySQL()
+  const user = new User()
   try {
     data = await user.delete(parseInt(req.params.id))
     return res.send((data[0].affectedRows) ? 'User deleted successfully!' : 'User not found!')
