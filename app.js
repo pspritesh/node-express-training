@@ -14,6 +14,10 @@ const Profile = require('./src/models/Sequelize/Profile');
 const User = require('./src/models/Sequelize/User');
 const UserProducts = require('./src/models/Sequelize/UserProducts');
 /* Sequelize imports */
+
+/* MongoDB imports */
+const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
+/* MongoDB imports */
 /* Custom modules */
 
 // Best practices app settings
@@ -67,14 +71,20 @@ Profile.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
 // Sequelize Many-To-Many relationship
 User.belongsToMany(Product, {through: UserProducts})
 Product.belongsToMany(User, {through: UserProducts})
-/* Sequelize relationships */
 
-// Sequelize provides feature of creating all missing tables from models into database using sequelize sync()
-// sequelize.sync({force:true})                       // Forcefully dumps all tables and recreates them again
+// Sequelize auto-create missing tables using sync()
 sequelize.sync()
   .then(result => {
-    app.listen(process.env.APP_PORT, () => {
-      console.log(`Find the server at: ${process.env.APP_URL}`); // eslint-disable-line no-console
+    app.listen(process.env.PORT, () => {
+      console.log(`Find the server at: ${process.env.APP_URL}`);
     });
   })
   .catch(err => console.log(err))
+/* Sequelize relationships */
+
+// Connect to MongoDB
+mongoConnect(() => {
+  // app.listen(process.env.PORT, () => {
+  //   console.log(`Find the server at: ${process.env.APP_URL}`);
+  // });
+})

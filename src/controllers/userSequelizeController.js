@@ -136,7 +136,7 @@ exports.deleteUser = async (req, res) => {
   try {
     // user = await User.destroy({where: {id: parseInt(req.params.id)}})
     user = await User.findAll({where: {id: parseInt(req.params.id)}})
-    if (user) {
+    if (user[0]) {
       profile = await user[0].getProfile()
       if (profile) {
         profile.destroy()

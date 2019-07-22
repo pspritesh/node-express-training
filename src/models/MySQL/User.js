@@ -10,13 +10,13 @@ module.exports = class User {
   }
 
   save(user) {
-    return db.execute(`INSERT INTO users (fname, mname, lname, username, email, password) 
-      VALUES (?, ?, ?, ?, ?, ?)`, [user.fname, user.mname, user.lname, user.username, user.email, user.password])
+    return db.execute(`INSERT INTO users (username, email, password) 
+      VALUES (?, ?, ?)`, [user.username, user.email, user.password])
   }
 
   update(user, id) {
-    return db.execute(`UPDATE users SET fname=?, mname=?, lname=?, username=?, email=?, password=?
-      WHERE id=?`, [user.fname, user.mname, user.lname, user.username, user.email, user.password, id])
+    return db.execute(`UPDATE users SET username=?, email=?, password=?
+      WHERE id=?`, [user.username, user.email, user.password, id])
   }
 
   delete(id) {
