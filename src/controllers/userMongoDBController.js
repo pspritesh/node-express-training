@@ -62,7 +62,7 @@ exports.deleteUser = async (req, res) => {
   const user = new User()
   try {
     data = await user.delete(req.params.id)
-    return res.send((data.deletedCount) ? 'User deleted successfully!' : 'User not found!')
+    return res.send((data.deletedCount) ? 'User deleted successfully!' : 'User not deleted!')
   } catch (error) {
     console.error(error)
     return res.send("Something went wrong!")
