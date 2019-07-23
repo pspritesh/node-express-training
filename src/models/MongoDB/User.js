@@ -16,6 +16,7 @@ module.exports = class User {
 
   get(id) {
     const db = getDB()
+    // return db.collection('users').find({_id: new mongodb.ObjectId(id)}).next()
     return db.collection('users').findOne({_id: new mongodb.ObjectId(id)})
   }
 
