@@ -1,8 +1,8 @@
 {
-  "name": "express1stapp",
+  "name": "node-express-training",
   "version": "1.0.0",
-  "description": "My 1st proper app.",
-  "main": "index.js",
+  "description": "Express app for complex node training.",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js"
@@ -18,10 +18,10 @@
     "express-handlebars": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.3.0-beta2",
-    "mongoose": "^5.6.4",
+    "mongoose": "^5.6.6",
     "mysql2": "^1.6.5",
     "pug": "^2.0.4",
-    "sequelize": "^5.10.0",
+    "sequelize": "^5.10.3",
     "sequelize-cli": "^5.5.0"
   },
   "devDependencies": {

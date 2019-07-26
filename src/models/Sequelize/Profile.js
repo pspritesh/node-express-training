@@ -20,9 +20,7 @@ const Profile = sequelize.define('profile', {
   lname: {
     type: Sequelize.STRING,
     allowNull: false
-  },
-  createdAt: Sequelize.DATE,
-  updatedAt: Sequelize.DATE
+  }
 });
 
 module.exports = Profile

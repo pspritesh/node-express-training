@@ -47,7 +47,7 @@ app.enable('etag'); // use strong etags
 app.set('etag', 'strong');
 
 // Handles routes in the app
-app.use(routes);
+app.use('/api', routes);
 
 // Handles 404 requests
 app.use(error404Controller.error404);
@@ -69,8 +69,8 @@ Profile.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
 // Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
 
 // Sequelize Many-To-Many relationship
-User.belongsToMany(Product, {through: UserProducts})
-Product.belongsToMany(User, {through: UserProducts})
+User.belongsToMany(Product, {through: UserProducts, constraints: true, onDelete: 'CASCADE'})
+Product.belongsToMany(User, {through: UserProducts, constraints: true, onDelete: 'CASCADE'})
 
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
