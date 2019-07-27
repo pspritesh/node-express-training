@@ -31,4 +31,9 @@ module.exports = class User {
     // return db.collection('users').deleteOne({_id: new mongodb.ObjectId(id)}).then(result => result).catch(err => console.log(err))
     return db.collection('users').deleteOne({_id: new mongodb.ObjectId(id)})
   }
+
+  getProducts(id) {
+    const db = getDB()
+    return db.collection('products').find({userId: new mongodb.ObjectId(id)}).toArray()
+  }
 }

@@ -10,6 +10,7 @@ router.put('/:id', userSequelizeController.updateUser)
 router.delete('/:id', userSequelizeController.deleteUser)
 
 router.get('/:id/mtm', userSequelizeController.getProduct)
-router.post('/:id/mtm', userSequelizeController.addProduct)
+router.post('/:id/mtm', userSequelizeController.addNewProduct)
+router.post('/:uid/:pid', userSequelizeController.assignProduct)
 
 module.exports = router
