@@ -32,8 +32,8 @@ module.exports = class User {
     return db.collection('users').deleteOne({_id: new mongodb.ObjectId(id)})
   }
 
-  getProducts(id) {
+  getProducts(productIds) {
     const db = getDB()
-    return db.collection('products').find({userId: new mongodb.ObjectId(id)}).toArray()
+    return db.collection('products').find({_id: {$in: productIds}}).toArray()
   }
 }

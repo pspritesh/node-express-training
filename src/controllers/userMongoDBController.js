@@ -95,7 +95,7 @@ exports.getProducts = async (req, res) => {
     const user = new User()
     const userData = await user.get(req.params.id)
     if (userData) {
-      const productData = await user.getProducts(userData._id)
+      const productData = await user.getProducts(userData.products)
       return res.status(productData.length ? 200 : 404).send(productData.length ? productData : 'Product not found!')
     } else {
       return res.status(404).send('User not found!')

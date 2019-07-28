@@ -27,9 +27,4 @@ module.exports = class Product {
     const db = getDB()
     return db.collection('products').deleteOne({_id: new mongodb.ObjectId(id)})
   }
-
-  getUser(id) {
-    const db = getDB()
-    return db.collection('users').find({_id: new mongodb.ObjectId(id)}).toArray()
-  }
 }

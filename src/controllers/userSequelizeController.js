@@ -4,20 +4,19 @@ const User = require('../models/Sequelize/User');
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.findAll()
-    data = await users.map(async user => {
+    data = []
+    users.forEach(async user => {
       const profiles = await user.getProfile()
-      const userData = {
+      data.push({
         id: user.id,
-        profile: (profiles) ? profiles : {},
+        profile: (profiles) ? profiles.dataValues : {},
         username: user.username,
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
-      }
-      return userData;
+      })
     })
-    // console.log(data)
-    return res.send(data)
+    setTimeout(() => res.send(data), 5000)
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
