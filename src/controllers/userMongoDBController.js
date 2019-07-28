@@ -32,7 +32,17 @@ exports.addUser = async (req, res) => {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      const data = await user.save(parsedBody)
+      let userData = {
+        profile: {
+          fname: parsedBody.fname,
+          mname: parsedBody.mname,
+          lname: parsedBody.lname
+        },
+        username: parsedBody.username,
+        email: parsedBody.email,
+        password: parsedBody.password
+      }
+      const data = await user.save(userData)
       return res.status((data.insertedCount) ? 200 : 404).send((data.insertedCount) ? 'User added successfully!' : 'Something went wrong!')
     })
   } catch (error) {
@@ -50,7 +60,17 @@ exports.updateUser = async (req, res) => {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      const data = await user.update(parsedBody, req.params.id)
+      let userData = {
+        profile: {
+          fname: parsedBody.fname,
+          mname: parsedBody.mname,
+          lname: parsedBody.lname
+        },
+        username: parsedBody.username,
+        email: parsedBody.email,
+        password: parsedBody.password
+      }
+      const data = await user.update(userData, req.params.id)
       return res.status((data.modifiedCount) ? 200 : 404).send((data.modifiedCount) ? "User updated successfully!" : 'User not updated!')
     })
   } catch (error) {
