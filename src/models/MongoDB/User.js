@@ -36,4 +36,9 @@ module.exports = class User {
     const db = getDB()
     return db.collection('products').find({_id: {$in: productIds}}).toArray()
   }
+
+  findByProduct(productId) {
+    const db = getDB()
+    return db.collection('users').find({products: new mongodb.ObjectId(productId)}).toArray()
+  }
 }

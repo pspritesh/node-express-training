@@ -12,5 +12,6 @@ router.delete('/:id', userMongoDBController.deleteUser)
 router.get('/:id/mtm', userMongoDBController.getProducts)
 router.post('/:id/mtm', userMongoDBController.addNewProduct)
 router.post('/:uid/:pid', userMongoDBController.assignProduct)
+router.delete('/products/:id', userMongoDBController.deleteProduct)
 
 module.exports = router
