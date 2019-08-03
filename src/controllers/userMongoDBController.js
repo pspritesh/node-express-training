@@ -90,7 +90,18 @@ exports.deleteUser = async (req, res) => {
   }
 }
 
-exports.getProducts = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
+  try {
+    const product = new Product()
+    const data = await product.getAll()
+    return res.status(data.length ? 200 : 404).send(data.length ? data : 'No products found!')
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.getUserProducts = async (req, res) => {
   try {
     const user = new User()
     const userData = await user.get(req.params.id)
@@ -106,29 +117,65 @@ exports.getProducts = async (req, res) => {
   }
 }
 
-exports.addNewProduct = async (req, res) => {
+exports.createProduct = async (req, res) => {
   try {
-    const user = new User()
-    const userData = await user.get(req.params.id)
+    const product = new Product()
     const body = []
     req.on('data', chunk => {
       body.push(chunk)
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      if (userData) {
+      const data = await product.save(parsedBody)
+      return res.status((data.insertedCount) ? 200 : 404).send((data.insertedCount) ? 'Product added successfully!' : 'Something went wrong!')
+    })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const product = new Product()
+    const body = []
+    req.on('data', chunk => {
+      body.push(chunk)
+    })
+    req.on('end', async () => {
+      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const data = await product.update(parsedBody, req.params.id)
+      return res.status((data.modifiedCount) ? 200 : 404).send((data.modifiedCount) ? "Product updated successfully!" : 'Product not updated!')
+    })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.addNewProduct = async (req, res) => {
+  try {
+    const user = new User()
+    const oldUserData = await user.get(req.params.id)
+    const body = []
+    req.on('data', chunk => {
+      body.push(chunk)
+    })
+    req.on('end', async () => {
+      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      if (oldUserData) {
         const product = new Product()
         const productData = await product.save(parsedBody)
-        if (userData.products) {
-          userData.products.push(productData.insertedId)
+        if (oldUserData.products) {
+          oldUserData.products.push(productData.insertedId)
         } else {
-          userData.products = [productData.insertedId]
+          oldUserData.products = [productData.insertedId]
         }
-        const userData = await user.update(userData, req.params.id)
+        const updatedUserData = await user.update(oldUserData, req.params.id)
         return res.status(
-            (productData.insertedCount && userData.modifiedCount) ? 200 : 404
+            (productData.insertedCount && updatedUserData.modifiedCount) ? 200 : 404
           ).send(
-            (productData.insertedCount && userData.modifiedCount) 
+            (productData.insertedCount && updatedUserData.modifiedCount) 
               ? 'Product assigned successfully!' 
               : 'Could not assign product for user!'
           )
@@ -182,17 +229,20 @@ exports.deleteProduct = async (req, res) => {
     if (productData) {
       const user = new User()
       const userData = await user.findByProduct(req.params.id)
-      const count = 0
-      if (userData.length) {
+      // console.log(productData)
+      const data = await product.delete(req.params.id)
+      if (data.deletedCount && userData.length) {
         userData.forEach(async eachUser => {
           console.log('oldUserData', eachUser.products)
           newProducts = (eachUser.products).filter(product => product.toString() !== productData._id.toString())
           console.log('newUserData', newProducts)
           eachUser.products = newProducts
-          const updateData = await user.update(eachUser, eachUser._id)
+          await user.update(eachUser, eachUser._id)
         })
+        res.send("Product deleted and cascaded successfully!")
+      } else {
+        res.send("Product deleted successfully!")
       }
-      res.send("Product deleted Successfully!")
     } else {
       res.status(404).send("No product to delete!")
     }
