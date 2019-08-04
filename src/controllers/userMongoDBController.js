@@ -157,13 +157,13 @@ exports.addNewProduct = async (req, res) => {
   try {
     const user = new User()
     const oldUserData = await user.get(req.params.id)
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      if (oldUserData) {
+    if (oldUserData) {
+      const body = []
+      req.on('data', chunk => {
+        body.push(chunk)
+      })
+      req.on('end', async () => {
+        const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
         const product = new Product()
         const productData = await product.save(parsedBody)
         if (oldUserData.products) {
@@ -176,13 +176,13 @@ exports.addNewProduct = async (req, res) => {
             (productData.insertedCount && updatedUserData.modifiedCount) ? 200 : 404
           ).send(
             (productData.insertedCount && updatedUserData.modifiedCount) 
-              ? 'Product assigned successfully!' 
+              ? 'Product added and assigned to user successfully!' 
               : 'Could not assign product for user!'
           )
-      } else {
-        return res.status(404).send('User not found!')
-      }
-    })
+      })
+    } else {
+      return res.status(404).send('User not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -229,13 +229,10 @@ exports.deleteProduct = async (req, res) => {
     if (productData) {
       const user = new User()
       const userData = await user.findByProduct(req.params.id)
-      // console.log(productData)
       const data = await product.delete(req.params.id)
       if (data.deletedCount && userData.length) {
         userData.forEach(async eachUser => {
-          console.log('oldUserData', eachUser.products)
           newProducts = (eachUser.products).filter(product => product.toString() !== productData._id.toString())
-          console.log('newUserData', newProducts)
           eachUser.products = newProducts
           await user.update(eachUser, eachUser._id)
         })

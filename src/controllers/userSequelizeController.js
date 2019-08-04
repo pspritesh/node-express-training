@@ -78,24 +78,24 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
-      // const user = await User.update(
-      //   {
-      //     username: parsedBody.username,
-      //     email: parsedBody.email,
-      //     password: parsedBody.password
-      //   },
-      //   {
-      //     where: {id: parseInt(req.params.id)}
-      //   }
-      // )
-      const user = await User.findAll({where: {id: parseInt(req.params.id)}})
-      if (user) {
+    const user = await User.findAll({where: {id: parseInt(req.params.id)}})
+    if (user) {
+      const body = []
+      req.on('data', chunk => {
+        body.push(chunk)
+      })
+      req.on('end', async () => {
+        const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+        // const user = await User.update(
+        //   {
+        //     username: parsedBody.username,
+        //     email: parsedBody.email,
+        //     password: parsedBody.password
+        //   },
+        //   {
+        //     where: {id: parseInt(req.params.id)}
+        //   }
+        // )
         user[0].username = parsedBody.username
         user[0].email = parsedBody.email
         user[0].password = parsedBody.password
@@ -114,10 +114,10 @@ exports.updateUser = async (req, res) => {
           })
         }
         return res.status(profile ? 200 : 404).send(profile ? 'User updated successfully!' : 'Could not update profile of user!')
-      } else {
-        return res.status(404).send('Could not update user!')
-      }
-    })
+      })
+    } else {
+      return res.status(404).send('Could not update user!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -162,23 +162,23 @@ exports.getProduct = async (req, res) => {
 exports.addNewProduct = async (req, res) => {
   try {
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const productData = JSON.parse(Buffer.concat(body).toString()).data
-      if (user.length) {
+    if (user.length) {
+      const body = []
+      req.on('data', chunk => {
+        body.push(chunk)
+      })
+      req.on('end', async () => {
+        const productData = JSON.parse(Buffer.concat(body).toString()).data
         const product = await user[0].createProduct({
           name: productData.name,
           price: productData.price,
           description: productData.description,
         })
         return res.status(product ? 200 : 404).send(product ? 'Product created successfully!' : 'Could not create product for user!')
-      } else {
-        return res.status(404).send('User not found!')
-      }
-    })
+      })
+    } else {
+      return res.status(404).send('User not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
