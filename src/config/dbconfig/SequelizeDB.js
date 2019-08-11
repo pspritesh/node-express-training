@@ -19,7 +19,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, pr
 
 sequelize.authenticate()
   .then(() => {
-    console.log(`Connection has been established successfully with database => ${process.env.DB_NAME}`);
+    console.log(`Connection has been established successfully using sequelize ORM with '${process.env.DB_NAME}' database.`);
   })
   .catch(err => {
     console.error(`Unable to connect to the database => ${err}`);
