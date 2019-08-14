@@ -7,18 +7,9 @@ require('dotenv').config();
 /* Custom modules */
 const error404Controller = require('./src/controllers/error404Controller');
 const routes = require('./src/routes/routes');
-
-/* Sequelize imports */
 const sequelize = require('./src/config/dbconfig/SequelizeDB');
-const Product = require('./src/models/Sequelize/Product');
-const Profile = require('./src/models/Sequelize/Profile');
-const User = require('./src/models/Sequelize/User');
-const UserProducts = require('./src/models/Sequelize/UserProducts');
-/* Sequelize imports */
-
-/* MongoDB imports */
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
-/* MongoDB imports */
+const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
 /* Custom modules */
 
 // Best practices app settings
@@ -60,19 +51,7 @@ app.use(function(err, req, res, next) {
 });
 /* eslint-enable no-unused-vars */
 
-/* Sequelize relationships */
-// Sequelize One-To-One relationship
-User.hasOne(Profile)
-Profile.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
-
-// Sequelize One-To-Many relationship
-// User.hasMany(Product)
-// Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
-
-// Sequelize Many-To-Many relationship
-User.belongsToMany(Product, {through: UserProducts, constraints: true, onDelete: 'CASCADE'})
-Product.belongsToMany(User, {through: UserProducts, constraints: true, onDelete: 'CASCADE'})
-
+sequelizeRelations.config()
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
   .then(() => {
@@ -81,7 +60,6 @@ sequelize.sync()
     });
   })
   .catch(err => console.log(err))
-/* Sequelize relationships */
 
 // Connect to MongoDB
 mongoConnect(() => {
@@ -91,6 +69,11 @@ mongoConnect(() => {
 })
 
 // Connect to Mongoose ODM
-mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true }).then(() => {
-  console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
-}).catch(err => console.log(err))
+mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true })
+  .then(() => {
+    // app.listen(process.env.PORT, () => {
+    //   console.log(`Find the server at: ${process.env.APP_URL}`);
+    // });
+    console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
+  })
+  .catch(err => console.log(err))
