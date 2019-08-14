@@ -161,7 +161,7 @@ exports.addNewProduct = async (req, res) => {
           description: parsedBody.description
         })
         if (product) {
-          userData.products.push(product._id)
+          userData.products.push(product)
           const user = await User.findByIdAndUpdate(req.params.id, userData)
           return res.status(user ? 200 : 404).send(user ? 'Product created and assigned to user successfully!' : 'Could not assign product to user!')
         } else {
@@ -183,7 +183,7 @@ exports.assignProduct = async (req, res) => {
     if (user) {
       const product = await Product.findById(req.params.pid)
       if (product) {
-        user.products.push(product._id)
+        user.products.push(product)
         /* Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
         const newUserData = await User.findByIdAndUpdate(req.params.uid, user)
