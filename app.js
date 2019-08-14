@@ -67,6 +67,7 @@ mongoConnect(() => {
   // app.listen(process.env.PORT, () => {
   //   console.log(`Find the server at: ${process.env.APP_URL}`);
   // });
+  console.log(`Connection has been established successfully with '${process.env.DB_NAME}' mongo database.`)
 })
 
 // Connect to Mongoose ODM
