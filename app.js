@@ -51,6 +51,7 @@ app.use(function(err, req, res, next) {
 });
 /* eslint-enable no-unused-vars */
 
+// Establishes all relations for Sequelize
 sequelizeRelations.config()
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
