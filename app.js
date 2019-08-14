@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose')
 const app = express();
 require('dotenv').config();
 
@@ -74,7 +75,7 @@ Product.belongsToMany(User, {through: UserProducts, constraints: true, onDelete:
 
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
-  .then(result => {
+  .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Find the server at: ${process.env.APP_URL}`);
     });
@@ -88,3 +89,8 @@ mongoConnect(() => {
   //   console.log(`Find the server at: ${process.env.APP_URL}`);
   // });
 })
+
+// Connect to Mongoose ODM
+mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true }).then(() => {
+  console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
+}).catch(err => console.log(err))

@@ -7,12 +7,14 @@ const productRoutes = require('./productRoutes')
 const userMySQLRoutes = require('./userMySQLRoutes')
 const userSequelizeRoutes = require('./userSequelizeRoutes')
 const userMongoDBRoutes = require('./userMongoDBRoutes')
+const userMongooseRoutes = require('./userMongooseRoutes')
 
 router.use('/admin', adminRoutes)
 router.use('/products', productRoutes)
 router.use('/usermysql', userMySQLRoutes)
 router.use('/usersequelize', userSequelizeRoutes)
 router.use('/usermongodb', userMongoDBRoutes)
+router.use('/usermongoose', userMongooseRoutes)
 router.use('/', userRoutes)
 
 module.exports = router
