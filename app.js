@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const app = express();
 require('dotenv').config();
 
@@ -8,8 +8,8 @@ require('dotenv').config();
 const error404Controller = require('./src/controllers/error404Controller');
 const routes = require('./src/routes/routes');
 const sequelize = require('./src/config/dbconfig/SequelizeDB');
-const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
-const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
+const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect;
+const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper');
 /* Custom modules */
 
 // Best practices app settings
@@ -52,7 +52,7 @@ app.use(function(err, req, res, next) {
 /* eslint-enable no-unused-vars */
 
 // Establishes all relations for Sequelize
-sequelizeRelations.config()
+sequelizeRelations.config();
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
   .then(() => {
@@ -67,7 +67,7 @@ mongoConnect(() => {
   // app.listen(process.env.PORT, () => {
   //   console.log(`Find the server at: ${process.env.APP_URL}`);
   // });
-  console.log(`Connection has been established successfully with '${process.env.DB_NAME}' mongo database.`)
+  console.log(`Connection has been established successfully with '${process.env.DB_NAME}' mongo database.`);
 })
 
 // Connect to Mongoose ODM
@@ -76,6 +76,6 @@ mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true
     // app.listen(process.env.PORT, () => {
     //   console.log(`Find the server at: ${process.env.APP_URL}`);
     // });
-    console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
+    console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`);
   })
   .catch(err => console.log(err))
