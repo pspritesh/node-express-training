@@ -1,5 +1,5 @@
-const Product = require('../models/Sequelize/Product');
-const User = require('../models/Sequelize/User');
+const Product = require('../models/Sequelize/Product')
+const User = require('../models/Sequelize/User')
 
 exports.getUsers = async (req, res) => {
   try {

@@ -9,6 +9,6 @@ const UserRoles = sequelize.define('userProducts', {
     allowNull: false,
     primaryKey: true
   }
-});
+})
 
 module.exports = UserRoles

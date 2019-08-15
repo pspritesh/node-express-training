@@ -1,5 +1,5 @@
-const User = require('../models/Mongoose/User');
-const Product = require('../models/Mongoose/Product');
+const User = require('../models/Mongoose/User')
+const Product = require('../models/Mongoose/Product')
 
 exports.getUsers = async (req, res) => {
   try {

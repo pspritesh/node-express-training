@@ -1,10 +1,8 @@
-const Data = require('../models/FileDB/Data');
+const Data = require('../models/FileDB/Data')
 
-exports.index = function(req, res) {
-  res.send('Controller demo method.');
-};
+exports.index = (req, res) => res.send('Controller demo method.')
 
-exports.my_demo = async function(req, res) {
+exports.my_demo = async (req, res) => {
   const data = new Data([
     `Hello there, Welcome to Pug rendered using Controller method!`,
     `This template defines how to interact with EJS.`
@@ -15,10 +13,10 @@ exports.my_demo = async function(req, res) {
   //   title: 'Welcome',
   //   messages: this.message
   // });
-};
+}
 
-exports.write_file = function(req, res) {
+exports.write_file = (req, res) => {
   const data = new Data()
   data.writeMyFile()
   return res.send("Success")
-};
+}

@@ -39,13 +39,13 @@ module.exports = class Data {
         if (!err) {
           data.push(JSON.parse(fileContent))
         } else {
-          reject(data);
+          reject(data)
         }
         output.push(data)
-        resolve(output);
+        resolve(output)
       })
-    };
+    }
 
-    return new Promise(readingFile);
+    return new Promise(readingFile)
   }
 }

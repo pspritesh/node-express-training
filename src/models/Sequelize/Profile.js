@@ -21,6 +21,6 @@ const Profile = sequelize.define('profile', {
     type: Sequelize.STRING,
     allowNull: false
   }
-});
+})
 
 module.exports = Profile

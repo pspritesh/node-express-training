@@ -1,5 +1,5 @@
-const User = require('../models/MongoDB/User');
-const Product = require('../models/MongoDB/Product');
+const User = require('../models/MongoDB/User')
+const Product = require('../models/MongoDB/Product')
 
 exports.getUsers = async (req, res) => {
   try {

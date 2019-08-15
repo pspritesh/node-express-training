@@ -1,6 +1,6 @@
-const Product = require('../models/FileDB/Product');
+const Product = require('../models/FileDB/Product')
 
-exports.getProducts = async function(req, res) {
+exports.getProducts = async (req, res) => {
   const product = new Product()
   try {
     data = await product.getAll()
@@ -9,24 +9,20 @@ exports.getProducts = async function(req, res) {
     console.error(error)
     return res.send("Something went wrong!")
   }
-};
+}
 
-exports.getProduct = async function(req, res) {
+exports.getProduct = async (req, res) => {
   const product = new Product()
   try {
     data = await product.get(parseInt(req.params.id))
-    if (data) {
-      return res.send(data)
-    } else {
-      return res.send("No product found!")
-    }
+    return res.send((data) ? data : "No product found!")
   } catch (error) {
     console.error(error)
     return res.send("Something went wrong!")
   }
-};
+}
 
-exports.addProduct = function(req, res) {
+exports.addProduct = (req, res) => {
   const product = new Product()
   const body = []
   try {
@@ -42,9 +38,9 @@ exports.addProduct = function(req, res) {
     console.error(error)
     return res.send("Something went wrong!")
   }
-};
+}
 
-exports.updateProduct = function(req, res) {
+exports.updateProduct = (req, res) => {
   const product = new Product()
   const body = []
   try {
@@ -60,9 +56,9 @@ exports.updateProduct = function(req, res) {
     console.error(error)
     return res.send("Something went wrong!")
   }
-};
+}
 
-exports.deleteProduct = async function(req, res) {
+exports.deleteProduct = async (req, res) => {
   const product = new Product()
   try {
     data = await product.delete(parseInt(req.params.id))
@@ -71,4 +67,4 @@ exports.deleteProduct = async function(req, res) {
     console.error(error)
     return res.send("Something went wrong!")
   }
-};
+}

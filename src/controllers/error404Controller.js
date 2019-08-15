@@ -1,3 +1,1 @@
-exports.error404 = function(req, res) {
-  res.status(404).render('error404', {title:'Page not found'})
-};
+exports.error404 = (req, res) => res.status(404).render('error404', {title:'Page not found'})

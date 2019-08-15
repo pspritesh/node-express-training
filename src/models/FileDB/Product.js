@@ -16,7 +16,7 @@ module.exports = class Product {
       if (!err) {
         data.push(JSON.parse(fileContent))
       } else {
-        reject(data);
+        reject(data)
       }
       cb(data[0])
     })
@@ -37,18 +37,18 @@ module.exports = class Product {
       let output = []
       this.readProduct(data => {
         output.push(data)
-        resolve(output);
+        resolve(output)
       }, reject)
-    });
+    })
   }
 
   get(id) {
     return new Promise((resolve, reject) => {
       this.readProduct(data => {
         const product = data.find(p => p.id === id)
-        resolve(product);
+        resolve(product)
       }, reject)
-    });
+    })
   }
 
   save(product) {
@@ -58,7 +58,7 @@ module.exports = class Product {
         data.push(product)
         this.writeProduct(data, reject, () => resolve("Product added successfully!"))
       }, reject)
-    });
+    })
   }
 
   update(product, id) {
@@ -67,15 +67,15 @@ module.exports = class Product {
         const old_product = data.findIndex(p => p.id === id)
         if (old_product) {
           product.id = data[old_product].id
-          data[old_product] = product;
+          data[old_product] = product
           this.writeProduct(data, reject, () => resolve("Product updated successfully!"))
         } else {
           resolve("Nothing to update!")
         }
       }, reject)
-    };
+    }
 
-    return new Promise(updateProduct);
+    return new Promise(updateProduct)
   }
 
   delete(id) {
@@ -87,6 +87,6 @@ module.exports = class Product {
           resolve("Nothing to delete!")
         }
       }, reject)
-    });
+    })
   }
 }
