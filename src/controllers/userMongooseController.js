@@ -217,12 +217,12 @@ exports.deleteProduct = async (req, res) => {
       })
       const deleteProduct = await Product.findByIdAndDelete(req.params.id)
       if (deleteProduct) {
-        res.send((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
+        return res.send((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
       } else {
-        res.status(404).send("Unable to delete product!")
+        return res.status(404).send("Unable to delete product!")
       }
     } else {
-      res.status(404).send("No product to delete!")
+      return res.status(404).send("No product to delete!")
     }
   } catch (error) {
     console.error(error)
