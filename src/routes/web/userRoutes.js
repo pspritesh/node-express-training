@@ -1,8 +1,8 @@
 const express = require('express')
 const router = new express.Router()
 
-const myController = require('../controllers/myController')
-const demoController = require('../controllers/demoController')
+const myController = require('../../controllers/myController')
+const demoController = require('../../controllers/demoController')
 
 router.use('/demo', myController.index)
 router.use('/pug-demo', demoController.my_demo)

@@ -1,7 +1,7 @@
 extends layouts/app.pug
 
 block content
-  if messages.length > 0
+  if messages
     each message in messages
       h2.style= message
   else

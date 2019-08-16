@@ -1,20 +1,10 @@
 const express = require('express')
 const router = new express.Router()
 
-const adminRoutes = require('./adminRoutes')
-const userRoutes = require('./userRoutes')
-const productRoutes = require('./productRoutes')
-const userMySQLRoutes = require('./userMySQLRoutes')
-const userSequelizeRoutes = require('./userSequelizeRoutes')
-const userMongoDBRoutes = require('./userMongoDBRoutes')
-const userMongooseRoutes = require('./userMongooseRoutes')
+const apiRoutes = require('./apiRoutes')
+const webRoutes = require('./webRoutes')
 
-router.use('/admin', adminRoutes)
-router.use('/products', productRoutes)
-router.use('/usermysql', userMySQLRoutes)
-router.use('/usersequelize', userSequelizeRoutes)
-router.use('/usermongodb', userMongoDBRoutes)
-router.use('/usermongoose', userMongooseRoutes)
-router.use('/', userRoutes)
+router.use('/api', apiRoutes)
+router.use('/', webRoutes)
 
 module.exports = router

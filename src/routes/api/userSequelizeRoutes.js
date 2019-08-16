@@ -1,7 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 
-const userSequelizeController = require('../controllers/userSequelizeController')
+const userSequelizeController = require('../../controllers/userSequelizeController')
 
 router.get('/', userSequelizeController.getUsers)
 router.get('/:id', userSequelizeController.getUser)

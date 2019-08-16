@@ -1,7 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 
-const userMongoDBController = require('../controllers/userMongoDBController')
+const userMongoDBController = require('../../controllers/userMongoDBController')
 
 router.get('/products', userMongoDBController.getAllProducts)
 router.post('/products', userMongoDBController.createProduct)

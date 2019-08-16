@@ -1,7 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 
-const userMySQLController = require('../controllers/userMySQLController')
+const userMySQLController = require('../../controllers/userMySQLController')
 
 router.get('/', userMySQLController.getUsers)
 router.get('/:id', userMySQLController.getUser)

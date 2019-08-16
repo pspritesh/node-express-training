@@ -39,7 +39,7 @@ app.enable('etag') // use strong etags
 app.set('etag', 'strong')
 
 // Handles routes in the app
-app.use('/api', routes)
+app.use(routes)
 
 // Handles 404 requests
 app.use(error404Controller.error404)

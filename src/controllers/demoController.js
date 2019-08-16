@@ -8,11 +8,11 @@ exports.my_demo = async (req, res) => {
     `This template defines how to interact with EJS.`
   ])
   message = await data.get()
-  res.send(message)
-  // res.render('index', {
-  //   title: 'Welcome',
-  //   messages: this.message
-  // });
+  // res.send(message)
+  res.render('index', {
+    title: 'Welcome',
+    messages: message
+  });
 }
 
 exports.write_file = (req, res) => {
