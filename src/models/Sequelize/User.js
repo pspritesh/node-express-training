@@ -20,6 +20,14 @@ const User = sequelize.define('user', {
   password: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  api_token: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  api_token_created_at: {
+    type: Sequelize.DATE,
+    allowNull: false
   }
 })
 
