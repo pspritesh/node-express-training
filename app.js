@@ -58,7 +58,7 @@ sequelize.sync()
       console.log(`Find the server at: ${process.env.APP_URL}`)
     })
   })
-  .catch(err => console.log(err))
+  .catch(err => console.error(err))
 
 // Connect to MongoDB
 mongoConnect(() => {
@@ -76,4 +76,4 @@ mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true
     // })
     console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
   })
-  .catch(err => console.log(err))
+  .catch(err => console.error(err))
