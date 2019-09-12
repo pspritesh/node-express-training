@@ -31,7 +31,7 @@ exports.addUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       let userData = {
         profile: {
           fname: parsedBody.fname,
@@ -59,7 +59,7 @@ exports.updateUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       let userData = {
         profile: {
           fname: parsedBody.fname,
@@ -125,7 +125,7 @@ exports.createProduct = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const data = await product.save(parsedBody)
       return res.status((data.insertedCount) ? 200 : 404).send((data.insertedCount) ? 'Product added successfully!' : 'Something went wrong!')
     })
@@ -143,7 +143,7 @@ exports.updateProduct = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const data = await product.update(parsedBody, req.params.id)
       return res.status((data.modifiedCount) ? 200 : 404).send((data.modifiedCount) ? "Product updated successfully!" : 'Product not updated!')
     })
@@ -163,7 +163,7 @@ exports.addNewProduct = async (req, res) => {
         body.push(chunk)
       })
       req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+        const parsedBody = JSON.parse(Buffer.concat(body).toString())
         const product = new Product()
         const productData = await product.save(parsedBody)
         if (oldUserData.products) {
