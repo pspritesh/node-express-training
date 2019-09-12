@@ -30,9 +30,9 @@ exports.addUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await user.save(parsedBody)
-      return res.send((data[0].affectedRows) ? 'User added successfully!' : 'Something went wrong!')
+      return res.send((data && data[0].affectedRows) ? 'User added successfully!' : 'Could not add user!')
     })
   } catch (error) {
     console.error(error)
@@ -48,9 +48,9 @@ exports.updateUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await user.update(parsedBody, parseInt(req.params.id))
-      return res.send((data[0].affectedRows) ? 'User updated successfully!' : 'User not found!')
+      return res.send((data && data[0].affectedRows) ? 'User updated successfully!' : 'User not found!')
     })
   } catch (error) {
     console.error(error)
@@ -62,7 +62,7 @@ exports.deleteUser = async (req, res) => {
   const user = new User()
   try {
     data = await user.delete(parseInt(req.params.id))
-    return res.send((data[0].affectedRows) ? 'User deleted successfully!' : 'User not found!')
+    return res.send((data && data[0].affectedRows) ? 'User deleted successfully!' : 'User not found!')
   } catch (error) {
     console.error(error)
     return res.send("Something went wrong!")

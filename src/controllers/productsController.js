@@ -30,7 +30,7 @@ exports.addProduct = (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await product.save(parsedBody)
       return res.send(data)
     })
@@ -48,7 +48,7 @@ exports.updateProduct = (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await product.update(parsedBody, parseInt(req.params.id))
       return res.send(data)
     })
