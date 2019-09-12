@@ -1,5 +1,7 @@
 const Product = require('../models/Sequelize/Product')
 const User = require('../models/Sequelize/User')
+const randomstring = require("randomstring")
+const datetime = require("node-datetime")
 
 exports.getUsers = async (req, res) => {
   try {
@@ -53,11 +55,13 @@ exports.addUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const user = await User.create({
         username: parsedBody.username,
         email: parsedBody.email,
-        password: parsedBody.password
+        password: parsedBody.password,
+        api_token: randomstring.generate(),
+        api_token_created_at: datetime.create().format('Y-m-d H:M:S')
       })
       if (user) {
         const profile = await user.createProfile({
@@ -85,7 +89,7 @@ exports.updateUser = async (req, res) => {
         body.push(chunk)
       })
       req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+        const parsedBody = JSON.parse(Buffer.concat(body).toString())
         // const user = await User.update(
         //   {
         //     username: parsedBody.username,
@@ -168,7 +172,7 @@ exports.addNewProduct = async (req, res) => {
         body.push(chunk)
       })
       req.on('end', async () => {
-        const productData = JSON.parse(Buffer.concat(body).toString()).data
+        const productData = JSON.parse(Buffer.concat(body).toString())
         const product = await user[0].createProduct({
           name: productData.name,
           price: productData.price,
