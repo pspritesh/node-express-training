@@ -28,7 +28,7 @@ exports.addUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const data = await User.create({
         profile: {
           fname: parsedBody.fname,
@@ -54,7 +54,7 @@ exports.updateUser = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const user = await User.findByIdAndUpdate(req.params.id, {
         profile: {
           fname: parsedBody.fname,
@@ -110,7 +110,7 @@ exports.createProduct = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const data = await Product.create({
         name: parsedBody.name,
         price: parsedBody.price,
@@ -131,7 +131,7 @@ exports.updateProduct = async (req, res) => {
       body.push(chunk)
     })
     req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const product = await Product.findByIdAndUpdate(req.params.id, {
         name: parsedBody.name,
         price: parsedBody.price,
@@ -154,7 +154,7 @@ exports.addNewProduct = async (req, res) => {
         body.push(chunk)
       })
       req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString()).data
+        const parsedBody = JSON.parse(Buffer.concat(body).toString())
         const product = await Product.create({
           name: parsedBody.name,
           price: parsedBody.price,

@@ -4,7 +4,7 @@ let _db;
 
 const mongoConnect = async callback => {
   try {
-    const result = await MongoClient.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true })
+    const result = await MongoClient.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true })
     _db = result.db()
     callback()
   } catch (error) {
