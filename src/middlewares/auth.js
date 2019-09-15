@@ -9,7 +9,7 @@ exports.custom = async (req, res, next) => {
       next()
     } else {
       user = await MongooseUser.find({ apiToken: token })
-      if (user) {
+      if (user.length) {
         next()
       } else {
         return res.send('Not authenticated!')
