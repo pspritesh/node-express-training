@@ -1,14 +1,14 @@
 const express = require('express')
-const path = require('path')
 const mongoose = require('mongoose')
+const path = require('path')
 const app = express()
 require('dotenv').config()
 
 /* Custom modules */
 const error404Controller = require('./src/controllers/error404Controller')
+const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
-const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
 /* Custom modules */
 

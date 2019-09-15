@@ -28,6 +28,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  apiToken: {
+    type: String,
+    required: true
+  },
   products: [
     {
       type: mongoose.ObjectId,

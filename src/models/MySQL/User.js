@@ -1,6 +1,6 @@
-const randomstring = require("randomstring")
-const datetime = require("node-datetime")
 const bcrypt = require('bcrypt')
+const datetime = require("node-datetime")
+const randomstring = require("randomstring")
 
 const db = require('../../config/dbconfig/MySQLDB')
 

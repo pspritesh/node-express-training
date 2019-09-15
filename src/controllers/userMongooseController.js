@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
+const randomstring = require("randomstring")
 
-const User = require('../models/Mongoose/User')
 const Product = require('../models/Mongoose/Product')
+const User = require('../models/Mongoose/User')
 
 exports.getUsers = async (req, res) => {
   try {
@@ -40,7 +41,8 @@ exports.addUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: hashedPassword
+        password: hashedPassword,
+        apiToken: randomstring.generate()
       })
       return res.status(user ? 200 : 404).send(user ? 'User added successfully!' : 'Something went wrong!')
     })
@@ -67,7 +69,8 @@ exports.updateUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: hashedPassword
+        password: hashedPassword,
+        apiToken: randomstring.generate()
       }, {useFindAndModify: false})
       return res.status(user ? 200 : 404).send(user ? 'User updated successfully!' : 'Nothing to update!')
     })

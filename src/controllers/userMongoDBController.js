@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 
-const User = require('../models/MongoDB/User')
 const Product = require('../models/MongoDB/Product')
+const User = require('../models/MongoDB/User')
 
 exports.getUsers = async (req, res) => {
   try {
@@ -43,7 +43,8 @@ exports.addUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: hashedPassword
+        password: hashedPassword,
+        apiToken: randomstring.generate()
       }
       const data = await user.save(userData)
       return res.status((data.insertedCount) ? 200 : 404).send((data.insertedCount) ? 'User added successfully!' : 'Something went wrong!')
@@ -72,7 +73,8 @@ exports.updateUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: hashedPassword
+        password: hashedPassword,
+        apiToken: randomstring.generate()
       }
       const data = await user.update(userData, req.params.id)
       return res.status((data.modifiedCount) ? 200 : 404).send((data.modifiedCount) ? "User updated successfully!" : 'User not updated!')
