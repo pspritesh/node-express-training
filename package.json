@@ -26,7 +26,8 @@
     "pug": "^2.0.4",
     "randomstring": "^1.1.5",
     "sequelize": "^5.12.2",
-    "sequelize-cli": "^5.5.0"
+    "sequelize-cli": "^5.5.0",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
