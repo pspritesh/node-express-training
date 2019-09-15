@@ -69,7 +69,7 @@ mongoConnect(() => {
 })
 
 // Connect to Mongoose ODM
-mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
   .then(() => {
     // app.listen(process.env.PORT, () => {
     //   console.log(`Find the server at: ${process.env.APP_URL}`)

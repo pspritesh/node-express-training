@@ -33,18 +33,23 @@ exports.addUser = async (req, res) => {
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-      const user = await User.create({
-        profile: {
-          fname: parsedBody.fname,
-          mname: parsedBody.mname,
-          lname: parsedBody.lname
-        },
-        username: parsedBody.username,
-        email: parsedBody.email,
-        password: hashedPassword,
-        apiToken: randomstring.generate()
-      })
-      return res.status(user ? 200 : 404).send(user ? 'User added successfully!' : 'Something went wrong!')
+      const data = await User.find({ username: parsedBody.username })
+      if (!data.length) {
+        const user = await User.create({
+          profile: {
+            fname: parsedBody.fname,
+            mname: parsedBody.mname,
+            lname: parsedBody.lname
+          },
+          username: parsedBody.username,
+          email: parsedBody.email,
+          password: hashedPassword,
+          apiToken: randomstring.generate()
+        })
+        return res.status(user ? 200 : 404).send(user ? 'User added successfully!' : 'Something went wrong!')
+      } else {
+        return res.status(404).send('Username is already taken, please choose a unique one!')
+      }
     })
   } catch (error) {
     console.error(error)

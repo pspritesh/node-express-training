@@ -59,22 +59,27 @@ exports.addUser = async (req, res) => {
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
       const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-      const user = await User.create({
-        username: parsedBody.username,
-        email: parsedBody.email,
-        password: hashedPassword,
-        api_token: randomstring.generate(),
-        api_token_created_at: datetime.create().format('Y-m-d H:M:S')
-      })
-      if (user) {
-        const profile = await user.createProfile({
-          fname: parsedBody.fname,
-          mname: parsedBody.mname,
-          lname: parsedBody.lname
+      const user = await User.findAll({where: {username: parsedBody.username}})
+      if (!user.length) {
+        const user = await User.create({
+          username: parsedBody.username,
+          email: parsedBody.email,
+          password: hashedPassword,
+          api_token: randomstring.generate(),
+          api_token_created_at: datetime.create().format('Y-m-d H:M:S')
         })
-        return res.status(profile ? 200 : 404).send(profile ? 'User added successfully!' : 'Could not create profile for user!')
+        if (user) {
+          const profile = await user.createProfile({
+            fname: parsedBody.fname,
+            mname: parsedBody.mname,
+            lname: parsedBody.lname
+          })
+          return res.status(profile ? 200 : 404).send(profile ? 'User added successfully!' : 'Could not create profile for user!')
+        } else {
+          return res.status(404).send('Could not create user!')
+        }
       } else {
-        return res.status(404).send('Could not create user!')
+        return res.status(404).send('Username is already taken, please choose a unique one!')
       }
     })
   } catch (error) {
