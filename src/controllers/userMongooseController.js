@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 const User = require('../models/Mongoose/User')
 const Product = require('../models/Mongoose/Product')
 
@@ -29,7 +31,8 @@ exports.addUser = async (req, res) => {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const data = await User.create({
+      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
+      const user = await User.create({
         profile: {
           fname: parsedBody.fname,
           mname: parsedBody.mname,
@@ -37,9 +40,9 @@ exports.addUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: parsedBody.password
+        password: hashedPassword
       })
-      return res.status(data ? 200 : 404).send(data ? 'User added successfully!' : 'Something went wrong!')
+      return res.status(user ? 200 : 404).send(user ? 'User added successfully!' : 'Something went wrong!')
     })
   } catch (error) {
     console.error(error)
@@ -55,6 +58,7 @@ exports.updateUser = async (req, res) => {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
+      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
       const user = await User.findByIdAndUpdate(req.params.id, {
         profile: {
           fname: parsedBody.fname,
@@ -63,8 +67,8 @@ exports.updateUser = async (req, res) => {
         },
         username: parsedBody.username,
         email: parsedBody.email,
-        password: parsedBody.password
-      })
+        password: hashedPassword
+      }, {useFindAndModify: false})
       return res.status(user ? 200 : 404).send(user ? 'User updated successfully!' : 'Nothing to update!')
     })
   } catch (error) {
@@ -75,7 +79,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id)
+    const user = await User.findByIdAndDelete(req.params.id, {useFindAndModify: false})
     return res.status(user ? 200 : 404).send(user ? 'User delete successfully!' : 'Nothing to delete!')
   } catch (error) {
     console.error(error)
@@ -136,7 +140,7 @@ exports.updateProduct = async (req, res) => {
         name: parsedBody.name,
         price: parsedBody.price,
         description: parsedBody.description
-      })
+      }, {useFindAndModify: false})
       return res.status(product ? 200 : 404).send(product ? "Product updated successfully!" : 'Product not updated!')
     })
   } catch (error) {
@@ -162,7 +166,7 @@ exports.addNewProduct = async (req, res) => {
         })
         if (product) {
           userData.products.push(product)
-          const user = await User.findByIdAndUpdate(req.params.id, userData)
+          const user = await User.findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
           return res.status(user ? 200 : 404).send(user ? 'Product created and assigned to user successfully!' : 'Could not assign product to user!')
         } else {
           return res.status(404).send('Could not create product!')
@@ -186,7 +190,7 @@ exports.assignProduct = async (req, res) => {
         user.products.push(product)
         /* Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
-        const newUserData = await User.findByIdAndUpdate(req.params.uid, user)
+        const newUserData = await User.findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
         return res.status(newUserData ? 200 : 404).send(newUserData ? 'Product assigned successfully!' : 'Could not assign product to user!')
       } else {
         return res.status(404).send('Product not found!')
@@ -209,13 +213,13 @@ exports.deleteProduct = async (req, res) => {
       userData.forEach(async user => {
         if (user.products.length) {
           user.products = user.products.filter(productId => productId.toString() !== product._id.toString())
-          const newUserData = await User.findByIdAndUpdate(user._id, user)
+          const newUserData = await User.findByIdAndUpdate(user._id, user, {useFindAndModify: false})
           if (newUserData) {
             count++
           }
         }
       })
-      const deleteProduct = await Product.findByIdAndDelete(req.params.id)
+      const deleteProduct = await Product.findByIdAndDelete(req.params.id, {useFindAndModify: false})
       if (deleteProduct) {
         return res.send((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
       } else {

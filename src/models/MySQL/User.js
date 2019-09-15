@@ -1,6 +1,8 @@
-const db = require('../../config/dbconfig/MySQLDB')
 const randomstring = require("randomstring")
 const datetime = require("node-datetime")
+const bcrypt = require('bcrypt')
+
+const db = require('../../config/dbconfig/MySQLDB')
 
 module.exports = class User {
   getAll() {
@@ -12,8 +14,9 @@ module.exports = class User {
   }
 
   async save(user) {
+    const hashedPassword = await bcrypt.hash(user.password, 256)
     const users = await db.execute(`INSERT INTO users (username, email, password, api_token, api_token_created_at, created_at, updated_at) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)`, [user.username, user.email, user.password, randomstring.generate(), datetime.create().format('Y-m-d H:M:S'), datetime.create().format('Y-m-d H:M:S'), datetime.create().format('Y-m-d H:M:S')])
+      VALUES (?, ?, ?, ?, ?, ?, ?)`, [user.username, user.email, hashedPassword, randomstring.generate(), datetime.create().format('Y-m-d H:M:S'), datetime.create().format('Y-m-d H:M:S'), datetime.create().format('Y-m-d H:M:S')])
     
     if (users[0].affectedRows) {
       return db.execute(`INSERT INTO profiles (fname, mname, lname, created_at, updated_at, user_id) VALUES (?, ?, ?, ?, ?, ?)`,
@@ -24,8 +27,9 @@ module.exports = class User {
   }
 
   async update(user, id) {
+    const hashedPassword = await bcrypt.hash(user.password, 256)
     const users = await db.execute(`UPDATE users SET username=?, email=?, password=?, updated_at=? WHERE id=?`, 
-      [user.username, user.email, user.password, datetime.create().format('Y-m-d H:M:S'), id])
+      [user.username, user.email, hashedPassword, datetime.create().format('Y-m-d H:M:S'), id])
     
     if (users[0].affectedRows) {
       return db.execute(`UPDATE profiles SET fname=?, mname=?, lname=?, updated_at=? WHERE user_id=?`,

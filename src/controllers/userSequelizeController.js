@@ -1,7 +1,9 @@
+const bcrypt = require('bcrypt')
+const datetime = require("node-datetime")
+const randomstring = require("randomstring")
+
 const Product = require('../models/Sequelize/Product')
 const User = require('../models/Sequelize/User')
-const randomstring = require("randomstring")
-const datetime = require("node-datetime")
 
 exports.getUsers = async (req, res) => {
   try {
@@ -56,10 +58,11 @@ exports.addUser = async (req, res) => {
     })
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
+      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
       const user = await User.create({
         username: parsedBody.username,
         email: parsedBody.email,
-        password: parsedBody.password,
+        password: hashedPassword,
         api_token: randomstring.generate(),
         api_token_created_at: datetime.create().format('Y-m-d H:M:S')
       })
@@ -90,11 +93,12 @@ exports.updateUser = async (req, res) => {
       })
       req.on('end', async () => {
         const parsedBody = JSON.parse(Buffer.concat(body).toString())
+        const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
         // const user = await User.update(
         //   {
         //     username: parsedBody.username,
         //     email: parsedBody.email,
-        //     password: parsedBody.password
+        //     password: hashedPassword
         //   },
         //   {
         //     where: {id: parseInt(req.params.id)}
@@ -102,7 +106,7 @@ exports.updateUser = async (req, res) => {
         // )
         user[0].username = parsedBody.username
         user[0].email = parsedBody.email
-        user[0].password = parsedBody.password
+        user[0].password = hashedPassword
         user[0].save()
         const profile = await user[0].getProfile()
         if (profile) {
