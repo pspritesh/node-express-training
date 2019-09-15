@@ -8,7 +8,7 @@ exports.custom = async (req, res, next) => {
     if (user.length) {
       next()
     } else {
-      user = await MongooseUser.find({ 'api_token': token })
+      user = await MongooseUser.find({ apiToken: token })
       if (user) {
         next()
       } else {
