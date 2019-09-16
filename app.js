@@ -1,8 +1,10 @@
+const csrf = require('csurf')
 const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const app = express()
 require('dotenv').config()
+const csrfProtection = csrf()
 
 /* Custom modules */
 const error404Controller = require('./src/controllers/error404Controller')
@@ -40,6 +42,9 @@ app.set('etag', 'strong')
 
 // Handles routes in the app
 app.use(routes)
+
+// Enables CSRF protection for forms
+app.use(csrfProtection)
 
 // Handles 404 requests
 app.use(error404Controller.error404)
