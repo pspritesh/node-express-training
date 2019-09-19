@@ -46,6 +46,9 @@ app.use(routes)
 // Enables CSRF protection for forms
 app.use(csrfProtection)
 
+// Pass CSRF field value to each Views globally so that it can be used in forms
+app.use((req, res, next) => res.locals.csrfToken = req.csrfToken())
+
 // Handles 404 requests
 app.use(error404Controller.error404)
 
