@@ -1,5 +1,6 @@
 const csrf = require('csurf')
 const express = require('express')
+const flash = require('connect-flash')
 const mongoose = require('mongoose')
 const path = require('path')
 const app = express()
@@ -40,14 +41,19 @@ app.use(express.static(path.join(__dirname, 'src/public')))
 app.enable('etag') // use strong etags
 app.set('etag', 'strong')
 
-// Handles routes in the app
-app.use(routes)
-
+/* CSRF Configuration */
 // Enables CSRF protection for forms
-app.use(csrfProtection)
+// app.use(csrfProtection)
 
 // Pass CSRF field value to each Views globally so that it can be used in forms
-app.use((req, res, next) => res.locals.csrfToken = req.csrfToken())
+// app.use((req, res, next) => res.locals.csrfToken = req.csrfToken())
+/* CSRF Configuration */
+
+// To use flash messages in our project
+// app.use(flash())
+
+// Handles routes in the app
+app.use(routes)
 
 // Handles 404 requests
 app.use(error404Controller.error404)

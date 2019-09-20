@@ -1,4 +1,6 @@
 extends ../layouts/app.pug
 
 block content
+  if errorMsg
+    div.flash= errorMsg
   h1.style= message
