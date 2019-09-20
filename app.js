@@ -3,8 +3,10 @@ const express = require('express')
 const flash = require('connect-flash')
 const mongoose = require('mongoose')
 const path = require('path')
-const app = express()
+const session = require('express-session')
 require('dotenv').config()
+
+const app = express()
 const csrfProtection = csrf()
 
 /* Custom modules */
@@ -40,6 +42,13 @@ app.use(express.static(path.join(__dirname, 'src/public')))
 
 app.enable('etag') // use strong etags
 app.set('etag', 'strong')
+
+// Express Session
+// app.use(session({
+//   secret: 'secret',
+//   resave: false,
+//   saveUninitialized: false
+// }))
 
 /* CSRF Configuration */
 // Enables CSRF protection for forms
