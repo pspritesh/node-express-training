@@ -95,7 +95,7 @@ exports.addUser = async (req, res) => {
                 Password: ${parsedBody.password}
                 Thank you for joining us. Good luck.
               </p>`
-            })
+            }).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
             return res.send('User added successfully!')
           } else {
             return res.status(404).send('Could not create profile for user!')
