@@ -1,17 +1,10 @@
 const bcrypt = require('bcrypt')
 const datetime = require('node-datetime')
-const nodemailer = require('nodemailer')
 const randomstring = require('randomstring')
-const sendgridTransport = require('nodemailer-sendgrid-transport')
 
+const mailer = require('../config/mailer')
 const Product = require('../models/Sequelize/Product')
 const User = require('../models/Sequelize/User')
-
-const transporter = nodemailer.createTransport(sendgridTransport({
-  auth: {
-    api_key: process.env.MAILER_API_KEY
-  }
-}))
 
 exports.getUsers = async (req, res) => {
   try {
@@ -83,11 +76,11 @@ exports.addUser = async (req, res) => {
             lname: parsedBody.lname
           })
           if (profile) {
-            transporter.sendMail({
-              to: parsedBody.email,
-              from: 'psp@sendgrid.com',
-              subject: 'Node App Signin',
-              html: `<p>
+            mailer.sendMail(
+              parsedBody.email,
+              'psp@sendgrid.com',
+              'Node App Signin',
+              `<p>
                 Hi ${parsedBody.fname},
                 Your account has been created successfully.
                 Please find your credentials mentioned below :
@@ -95,7 +88,7 @@ exports.addUser = async (req, res) => {
                 Password: ${parsedBody.password}
                 Thank you for joining us. Good luck.
               </p>`
-            }).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+            ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
             return res.send('User added successfully!')
           } else {
             return res.status(404).send('Could not create profile for user!')
