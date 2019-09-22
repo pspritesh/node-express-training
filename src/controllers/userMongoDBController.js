@@ -59,15 +59,15 @@ exports.addUser = async (req, res) => {
       if (data.insertedCount) {
         mailer.sendMail(
           parsedBody.email,
-          'psp@sendgrid.com',
+          process.env.EMAIL_FROM_ADDRESS,
           'Node App Signin',
           `<p>
-            Hi ${parsedBody.fname},
-            Your account has been created successfully.
-            Please find your credentials mentioned below :
-            Username: ${parsedBody.username}
-            Password: ${parsedBody.password}
-            Thank you for joining us. Good luck.
+            Hi ${parsedBody.fname},<br>
+            Your account has been created successfully.<br>
+            Please find your credentials mentioned below :<br>
+            Username: ${parsedBody.username}<br>
+            Password: ${parsedBody.password}<br>
+            Thank you for joining us. Good luck.<br>
           </p>`
         ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
         return res.status(201).send('User added successfully!')
