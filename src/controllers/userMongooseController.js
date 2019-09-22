@@ -1,13 +1,18 @@
 const bcrypt = require('bcrypt')
 const randomstring = require("randomstring")
 
+const mailer = require('../config/mailer')
 const Product = require('../models/Mongoose/Product')
 const User = require('../models/Mongoose/User')
 
 exports.getUsers = async (req, res) => {
   try {
     const data = await User.find()
-    return res.status(data.length ? 200 : 404).send(data.length ? data : 'No users found!')
+    if (data.length) {
+      return res.send(data)
+    } else {
+      return res.status(404).send('No users found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -17,7 +22,11 @@ exports.getUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const data = await User.findById(req.params.id)
-    return res.status(data ? 200 : 404).send(data ? data : 'User not found!')
+    if (data) {
+      return res.send(data)
+    } else {
+      return res.status(404).send('User not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -46,7 +55,24 @@ exports.addUser = async (req, res) => {
           password: hashedPassword,
           apiToken: randomstring.generate()
         })
-        return res.status(user ? 200 : 404).send(user ? 'User added successfully!' : 'Something went wrong!')
+        if (user) {
+          mailer.sendMail(
+            parsedBody.email,
+            'psp@sendgrid.com',
+            'Node App Signin',
+            `<p>
+              Hi ${parsedBody.fname},
+              Your account has been created successfully.
+              Please find your credentials mentioned below :
+              Username: ${parsedBody.username}
+              Password: ${parsedBody.password}
+              Thank you for joining us. Good luck.
+            </p>`
+          ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+          return res.status(201).send('User added successfully!')
+        } else {
+          return res.status(404).send('Something went wrong!')
+        }
       } else {
         return res.status(404).send('Username is already taken, please choose a unique one!')
       }
@@ -77,7 +103,11 @@ exports.updateUser = async (req, res) => {
         password: hashedPassword,
         apiToken: randomstring.generate()
       }, {useFindAndModify: false})
-      return res.status(user ? 200 : 404).send(user ? 'User updated successfully!' : 'Nothing to update!')
+      if (user) {
+        return res.status(201).send('User updated successfully!')
+      } else {
+        return res.status(404).send('Nothing to update!')
+      }
     })
   } catch (error) {
     console.error(error)
@@ -88,7 +118,11 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id, {useFindAndModify: false})
-    return res.status(user ? 200 : 404).send(user ? 'User delete successfully!' : 'Nothing to delete!')
+    if (user) {
+      return res.send('User delete successfully!')
+    } else {
+      return res.status(404).send('Nothing to delete!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -98,7 +132,11 @@ exports.deleteUser = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const data = await Product.find()
-    return res.status(data.length ? 200 : 404).send(data.length ? data : 'No products found!')
+    if (data.length) {
+      return res.send(data)
+    } else {
+      return res.status(404).send('No products found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -108,7 +146,11 @@ exports.getAllProducts = async (req, res) => {
 exports.getUserProducts = async (req, res) => {
   try {
     const userProducts = await User.findById(req.params.id).select('products -_id').populate('products')
-    return res.status(userProducts ? 200 : 404).send(userProducts ? userProducts : 'Products not found!')
+    if (userProducts) {
+      return res.send(userProducts)
+    } else {
+      return res.status(404).send('Products not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -128,7 +170,11 @@ exports.createProduct = async (req, res) => {
         price: parsedBody.price,
         description: parsedBody.description
       })
-      return res.status(data ? 200 : 404).send(data ? 'Product added successfully!' : 'Something went wrong!')
+      if (data) {
+        return res.status(201).send('Product added successfully!')
+      } else {
+        return res.status(404).send('Could not add product!')
+      }
     })
   } catch (error) {
     console.error(error)
@@ -149,7 +195,11 @@ exports.updateProduct = async (req, res) => {
         price: parsedBody.price,
         description: parsedBody.description
       }, {useFindAndModify: false})
-      return res.status(product ? 200 : 404).send(product ? "Product updated successfully!" : 'Product not updated!')
+      if (product) {
+        return res.status(201).send('Product updated successfully!')
+      } else {
+        return res.status(404).send('Product not updated!')
+      }
     })
   } catch (error) {
     console.error(error)
@@ -175,7 +225,11 @@ exports.addNewProduct = async (req, res) => {
         if (product) {
           userData.products.push(product)
           const user = await User.findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
-          return res.status(user ? 200 : 404).send(user ? 'Product created and assigned to user successfully!' : 'Could not assign product to user!')
+          if (user) {
+            return res.status(201).send('Product created and assigned to user successfully!')
+          } else {
+            return res.status(404).send('Could not assign product to user!')
+          }
         } else {
           return res.status(404).send('Could not create product!')
         }
@@ -199,7 +253,11 @@ exports.assignProduct = async (req, res) => {
         /* Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
         const newUserData = await User.findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
-        return res.status(newUserData ? 200 : 404).send(newUserData ? 'Product assigned successfully!' : 'Could not assign product to user!')
+        if (newUserData) {
+          return res.status(201).send('Product assigned successfully!')
+        } else {
+          return res.status(404).send('Could not assign product to user!')
+        }
       } else {
         return res.status(404).send('Product not found!')
       }

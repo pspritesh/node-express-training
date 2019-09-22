@@ -89,7 +89,7 @@ exports.addUser = async (req, res) => {
                 Thank you for joining us. Good luck.
               </p>`
             ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-            return res.send('User added successfully!')
+            return res.status(201).send('User added successfully!')
           } else {
             return res.status(404).send('Could not create profile for user!')
           }
@@ -144,7 +144,11 @@ exports.updateUser = async (req, res) => {
             lname: parsedBody.lname
           })
         }
-        return res.status(profile ? 200 : 404).send(profile ? 'User updated successfully!' : 'Could not update profile of user!')
+        if (profile) {
+          return res.status(201).send('User updated successfully!')
+        } else {
+          return res.status(404).send('Could not update profile of user!')
+        }
       })
     } else {
       return res.status(404).send('Could not update user!')
@@ -180,7 +184,11 @@ exports.getProduct = async (req, res) => {
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
     if (user.length) {
       const products = await user[0].getProducts()
-      return res.status(products.length ? 200 : 404).send(products.length ? products : 'No products found!')
+      if (products.length) {
+        return res.send(products)
+      } else {
+        return res.status(404).send('No products found!')
+      }
     } else {
       return res.status(404).send('User not found!')
     }
@@ -205,7 +213,11 @@ exports.addNewProduct = async (req, res) => {
           price: productData.price,
           description: productData.description,
         })
-        return res.status(product ? 200 : 404).send(product ? 'Product created successfully!' : 'Could not create product for user!')
+        if (product) {
+          return res.status(201).send('Product created successfully!')
+        } else {
+          return res.status(404).send('Could not create product for user!')
+        }
       })
     } else {
       return res.status(404).send('User not found!')
@@ -223,7 +235,11 @@ exports.assignProduct = async (req, res) => {
       const product = await Product.findAll({where: {id: parseInt(req.params.pid)}})
       if (product.length) {
         data = await user[0].addProduct(product[0])
-        return res.status(data ? 200 : 404).send(data ? 'Product assigned successfully!' : 'Could not assign product for user!')
+        if (data) {
+          return res.status(201).send('Product assigned successfully!')
+        } else {
+          return res.status(404).send('Could not assign product for user!')
+        }
       } else {
         return res.status(404).send('No product found!')
       }

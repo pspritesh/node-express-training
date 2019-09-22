@@ -1,13 +1,18 @@
+const mailer = require('../config/mailer')
 const User = require('../models/MySQL/User')
 
 exports.getUsers = async (req, res) => {
   const user = new User()
   try {
     data = await user.getAll()
-    return res.send(data[0].length ? data[0] : 'No users found!')
+    if (data[0].length) {
+      return res.send(data[0])
+    } else {
+      return res.status(404).send('No users found!')
+    }
   } catch (error) {
     console.error(error)
-    return res.send("Something went wrong!")
+    return res.status(500).send("Something went wrong!")
   }
 }
 
@@ -15,10 +20,14 @@ exports.getUser = async (req, res) => {
   const user = new User()
   try {
     data = await user.get(parseInt(req.params.id))
-    return res.send(data[0].length ? data[0] : 'User not found!')
+    if (data[0].length) {
+      return res.send(data[0])
+    } else {
+      return res.status(404).send('No users found!')
+    }
   } catch (error) {
     console.error(error)
-    return res.send("Something went wrong!")
+    return res.status(500).send("Something went wrong!")
   }
 }
 
@@ -32,11 +41,28 @@ exports.addUser = async (req, res) => {
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await user.save(parsedBody)
-      return res.send((data && data[0].affectedRows) ? 'User added successfully!' : 'Could not add user!')
+      if (data && data[0].affectedRows) {
+        mailer.sendMail(
+          parsedBody.email,
+          'psp@sendgrid.com',
+          'Node App Signin',
+          `<p>
+            Hi ${parsedBody.fname},
+            Your account has been created successfully.
+            Please find your credentials mentioned below :
+            Username: ${parsedBody.username}
+            Password: ${parsedBody.password}
+            Thank you for joining us. Good luck.
+          </p>`
+        ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+        return res.status(201).send('User added successfully!')
+      } else {
+        return res.status(404).send('Could not add user!')
+      }
     })
   } catch (error) {
     console.error(error)
-    return res.send("Something went wrong!")
+    return res.status(500).send("Something went wrong!")
   }
 }
 
@@ -50,11 +76,15 @@ exports.updateUser = async (req, res) => {
     req.on('end', async () => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await user.update(parsedBody, parseInt(req.params.id))
-      return res.send((data && data[0].affectedRows) ? 'User updated successfully!' : 'User not found!')
+      if (data && data[0].affectedRows) {
+        return res.status(201).send('User updated successfully!')
+      } else {
+        return res.status(404).send('User not found!')
+      }
     })
   } catch (error) {
     console.error(error)
-    return res.send("Something went wrong!")
+    return res.status(500).send("Something went wrong!")
   }
 }
 
@@ -62,9 +92,13 @@ exports.deleteUser = async (req, res) => {
   const user = new User()
   try {
     data = await user.delete(parseInt(req.params.id))
-    return res.send((data && data[0].affectedRows) ? 'User deleted successfully!' : 'User not found!')
+    if (data && data[0].affectedRows) {
+      return res.send('User deleted successfully!')
+    } else {
+      return res.status(404).send('User not found!')
+    }
   } catch (error) {
     console.error(error)
-    return res.send("Something went wrong!")
+    return res.status(500).send("Something went wrong!")
   }
 }
