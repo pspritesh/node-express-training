@@ -1,7 +1,9 @@
+const bodyParser = require('body-parser')
 const csrf = require('csurf')
 const express = require('express')
 const flash = require('connect-flash')
 const mongoose = require('mongoose')
+const multer = require('multer')
 const path = require('path')
 const session = require('express-session')
 require('dotenv').config()
@@ -36,6 +38,18 @@ app.use((req, res, next) => {
     next()
   }
 })
+
+// Form encryption application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// Multer callback for storing files in proper naming convension
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'src/public/files/images'),
+  filename: (req, file, cb) => cb(null, new Date().toISOString() + '-' + file.originalname)
+})
+
+// Form encryption multipart/form-data
+app.use(multer({ storage: fileStorage }).single('image'))
 
 // serve static files
 app.use(express.static(path.join(__dirname, 'src/public')))
