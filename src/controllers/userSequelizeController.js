@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt')
 const datetime = require('node-datetime')
+const fs = require('fs')
+const path = require('path')
 const randomstring = require('randomstring')
 
 const mailer = require('../config/mailer')
@@ -240,6 +242,28 @@ exports.addNewProductImage = async (req, res) => {
       } else {
         return res.status(404).send('No image found to upload!')
       }
+    } else {
+      return res.status(404).send('Product not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.getProductImage = async (req, res) => {
+  try {
+    const product = await Product.findAll({where: {id: parseInt(req.params.id)}})
+    if (product.length) {
+      // fs.readFile(path.join(path.dirname(process.mainModule.filename), product[0].image), (err, data) => {
+      //   if (err) {
+      //     return res.status(404).send("File not found!")
+      //   }
+      //   res.setHeader('Content-Type', 'application/jpg')
+      //   res.setHeader('Content-Disposition', `inline; filename=${product[0].image}`)
+      //   return res.status(200).send(data)
+      // })
+      return res.status(200).send(product[0].image)
     } else {
       return res.status(404).send('Product not found!')
     }
