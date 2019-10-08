@@ -1,15 +1,15 @@
 const bodyParser = require('body-parser')
-const csrf = require('csurf')
+// const csrf = require('csurf')
 const express = require('express')
-const flash = require('connect-flash')
+// const flash = require('connect-flash')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
-const session = require('express-session')
+// const session = require('express-session')
 require('dotenv').config()
 
 const app = express()
-const csrfProtection = csrf()
+// const csrfProtection = csrf()
 
 /* Custom modules */
 const error404Controller = require('./src/controllers/error404Controller')
