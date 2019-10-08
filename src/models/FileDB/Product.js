@@ -5,7 +5,7 @@ module.exports = class Product {
   filePath() {
     return path.join(
       path.dirname(process.mainModule.filename),
-      'src/public/files',
+      'src/public/files/databases',
       'product.json'
     )
   }
@@ -74,7 +74,6 @@ module.exports = class Product {
         }
       }, reject)
     }
-
     return new Promise(updateProduct)
   }
 

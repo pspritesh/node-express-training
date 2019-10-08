@@ -12,7 +12,7 @@ module.exports = class Data {
   writeMyFile() {
     const output_file = path.join(
       path.dirname(process.mainModule.filename),
-      'src/public/files',
+      'src/public/files/databases',
       'data.json'
     )
     fs.readFile(output_file, (err, fileContent) => {
@@ -29,7 +29,7 @@ module.exports = class Data {
     let output = []
     const output_file = path.join(
       path.dirname(process.mainModule.filename),
-      'src/public/files',
+      'src/public/files/databases',
       'data.json'
     )
 
@@ -45,7 +45,6 @@ module.exports = class Data {
         resolve(output)
       })
     }
-
     return new Promise(readingFile)
   }
 }
