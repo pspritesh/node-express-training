@@ -228,6 +228,27 @@ exports.addNewProduct = async (req, res) => {
   }
 }
 
+exports.addNewProductImage = async (req, res) => {
+  try {
+    const product = await Product.findAll({where: {id: parseInt(req.params.id)}})
+    if (product.length) {
+      const productImage = req.file
+      if (productImage) {
+        product[0].image = productImage.path
+        product[0].save()
+        return res.status(201).send('Image assigned to product successfully!')
+      } else {
+        return res.status(404).send('No image found to upload!')
+      }
+    } else {
+      return res.status(404).send('Product not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
 exports.assignProduct = async (req, res) => {
   try {
     const user = await User.findAll({where: {id: parseInt(req.params.uid)}})
