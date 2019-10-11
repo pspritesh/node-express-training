@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const datetime = require('node-datetime')
 const fs = require('fs')
 const path = require('path')
+const PDFDocument = require('pdfkit')
 const randomstring = require('randomstring')
 
 const mailer = require('../config/mailer')
@@ -275,6 +276,28 @@ exports.getProductImage = async (req, res) => {
       file.pipe(res)
     } else {
       return res.status(404).send('Product not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.generatePDF = async (req, res) => {
+  try {
+    const product = await Product.findAll({where: {id: parseInt(req.params.id)}})
+    if (product.length) {
+      const pdfDoc = new PDFDocument()
+      const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader('Content-Disposition', `inline; filename=${pdf}`)
+      pdfDoc.pipe(fs.createWriteStream(path.join(path.dirname(process.mainModule.filename), 'src/public/files/images', pdf)))
+      pdfDoc.pipe(res)
+      pdfDoc.text("Hello World!")
+      pdfDoc.fontSize(18).text("Hello World!", {
+        underline: true
+      })
+      pdfDoc.end()
     }
   } catch (error) {
     console.error(error)

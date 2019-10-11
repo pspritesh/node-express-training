@@ -15,4 +15,6 @@ router.get('/:id/image', userSequelizeController.getProductImage)
 router.post('/:id/image', userSequelizeController.addNewProductImage)
 router.post('/:uid/:pid', userSequelizeController.assignProduct)
 
+router.get('/:id/pdf', userSequelizeController.generatePDF)
+
 module.exports = router
