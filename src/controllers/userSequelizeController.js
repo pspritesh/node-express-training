@@ -255,6 +255,10 @@ exports.getProductImage = async (req, res) => {
   try {
     const product = await Product.findAll({where: {id: parseInt(req.params.id)}})
     if (product.length) {
+      /**** Sending file path in response */
+      // return res.status(200).send(product[0].image)
+
+      /**** Reading the entire file to make it available for users */
       // fs.readFile(path.join(path.dirname(process.mainModule.filename), product[0].image), (err, data) => {
       //   if (err) {
       //     return res.status(404).send("File not found!")
@@ -263,7 +267,12 @@ exports.getProductImage = async (req, res) => {
       //   res.setHeader('Content-Disposition', `inline; filename=${product[0].image}`)
       //   return res.status(200).send(data)
       // })
-      return res.status(200).send(product[0].image)
+
+      /**** Streaming the file for users */
+      const file = fs.createReadStream(path.join(path.dirname(process.mainModule.filename), product[0].image))
+      res.setHeader('Content-Type', 'application/jpg')
+      res.setHeader('Content-Disposition', `inline; filename=${product[0].image}`)
+      file.pipe(res)
     } else {
       return res.status(404).send('Product not found!')
     }
