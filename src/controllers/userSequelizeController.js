@@ -13,11 +13,10 @@ const User = require('../models/Sequelize/User')
 exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const page = req.query.page ? req.query.page : 1
     const allUsers = await User.findAndCountAll()
     const users = await User.findAll({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
-      offset: (page - 1) * itemsPerPage,
+      offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage,
       limit: itemsPerPage,
       include: [{
         model: Profile,
@@ -177,9 +176,8 @@ exports.deleteUser = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const page = req.query.page ? req.query.page : 1
     const allProducts = await Product.findAndCountAll()
-    const products = await Product.findAll({ offset: (page - 1) * itemsPerPage, limit: itemsPerPage })
+    const products = await Product.findAll({ offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage, limit: itemsPerPage })
     return res.send({
       data: products,
       totalPages: Math.ceil(allProducts.count/itemsPerPage)
