@@ -10,9 +10,15 @@ const User = require('../models/Mongoose/User')
 
 exports.getUsers = async (req, res) => {
   try {
-    const data = await User.find()
-    if (data.length) {
-      return res.send(data)
+    const itemsPerPage = 4
+    const page = req.query.page ? req.query.page : 1
+    const userCount = await User.find().countDocuments()
+    const users = await User.find().skip((page - 1) * itemsPerPage).limit(itemsPerPage)
+    if (users.length) {
+      return res.send({
+        data: users,
+        totalPages: Math.ceil(userCount/itemsPerPage)
+      })
     } else {
       return res.status(404).send('No users found!')
     }
@@ -134,9 +140,15 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const data = await Product.find()
-    if (data.length) {
-      return res.send(data)
+    const itemsPerPage = 4
+    const page = req.query.page ? req.query.page : 1
+    const productCount = await Product.find().countDocuments()
+    const products = await Product.find().skip((page - 1) * itemsPerPage).limit(itemsPerPage)
+    if (products.length) {
+      return res.send({
+        data: products,
+        totalPages: Math.ceil(productCount/itemsPerPage)
+      })
     } else {
       return res.status(404).send('No products found!')
     }
