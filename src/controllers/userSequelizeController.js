@@ -41,6 +41,7 @@ exports.getUser = async (req, res) => {
       where: {id: parseInt(req.params.id)},
       include: [{
         model: Profile,
+        as: 'profile',
         attributes: ['fname', 'mname', 'lname']
       }]
     })
