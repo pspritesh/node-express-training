@@ -7,24 +7,27 @@ const randomstring = require('randomstring')
 
 const mailer = require('../config/mailer')
 const Product = require('../models/Sequelize/Product')
+const Profile = require('../models/Sequelize/Profile')
 const User = require('../models/Sequelize/User')
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.findAll()
-    data = []
-    users.forEach(async user => {
-      const profiles = await user.getProfile()
-      data.push({
-        id: user.id,
-        profile: (profiles) ? profiles.dataValues : {},
-        username: user.username,
-        email: user.email,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      })
+    const itemsPerPage = 4
+    const page = req.query.page ? req.query.page : 1
+    const allUsers = await User.findAndCountAll()
+    const users = await User.findAll({
+      attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
+      offset: (page - 1) * itemsPerPage,
+      limit: itemsPerPage,
+      include: [{
+        model: Profile,
+        attributes: ['fname', 'mname', 'lname']
+      }]
     })
-    setTimeout(() => res.send(data), 5000)
+    res.send({
+      data: users,
+      totalPages: Math.ceil(allUsers.count/itemsPerPage)
+    })
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
@@ -33,18 +36,16 @@ exports.getUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const user = await User.findAll({where: {id: parseInt(req.params.id)}})
+    const user = await User.findAll({
+      attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
+      where: {id: parseInt(req.params.id)},
+      include: [{
+        model: Profile,
+        attributes: ['fname', 'mname', 'lname']
+      }]
+    })
     if (user.length) {
-      const profiles = await user[0].getProfile()
-      const userData = {
-        id: user[0].id,
-        profile: (profiles) ? profiles : {},
-        username: user[0].username,
-        email: user[0].email,
-        createdAt: user[0].createdAt,
-        updatedAt: user[0].updatedAt
-      }
-      res.send(userData)
+      res.send(user)
     } else {
       return res.status(404).send('No users found!')
     }
@@ -120,16 +121,6 @@ exports.updateUser = async (req, res) => {
       req.on('end', async () => {
         const parsedBody = JSON.parse(Buffer.concat(body).toString())
         const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-        // const user = await User.update(
-        //   {
-        //     username: parsedBody.username,
-        //     email: parsedBody.email,
-        //     password: hashedPassword
-        //   },
-        //   {
-        //     where: {id: parseInt(req.params.id)}
-        //   }
-        // )
         user[0].username = parsedBody.username
         user[0].email = parsedBody.email
         user[0].password = hashedPassword
@@ -182,6 +173,23 @@ exports.deleteUser = async (req, res) => {
   }
 }
 
+exports.getAllProducts = async (req, res) => {
+  try {
+    const itemsPerPage = 4
+    const page = req.query.page ? req.query.page : 1
+    const allProducts = await Product.findAndCountAll()
+    const products = await Product.findAll({ offset: (page - 1) * itemsPerPage, limit: itemsPerPage })
+    return res.send({
+      data: products,
+      totalPages: Math.ceil(allProducts.count/itemsPerPage)
+    })
+    res.send(products)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
 exports.getProduct = async (req, res) => {
   try {
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
@@ -195,6 +203,85 @@ exports.getProduct = async (req, res) => {
     } else {
       return res.status(404).send('User not found!')
     }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.createProduct = async (req, res) => {
+  try {
+    const body = []
+    req.on('data', chunk => {
+      body.push(chunk)
+    })
+    req.on('end', async () => {
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
+      const product = await Product.create({
+        name: parsedBody.name,
+        price: parsedBody.price,
+        description: parsedBody.description
+      })
+      if (product) {
+        return res.status(201).send('Product added successfully!')
+      } else {
+        return res.status(404).send('Could not create product!')
+      }
+    })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.updateProduct = async (req, res) => {
+  try {
+    const product = await Product.findAll({ where: {id: parseInt(req.params.id)} })
+    if (product) {
+      const body = []
+      req.on('data', chunk => {
+        body.push(chunk)
+      })
+      req.on('end', async () => {
+        const parsedBody = JSON.parse(Buffer.concat(body).toString())
+        const product = await Product.update(
+          {
+            name: parsedBody.name,
+            price: parsedBody.price,
+            description: parsedBody.description
+          },
+          {
+            where: {id: parseInt(req.params.id)}
+          }
+        )
+        if (product) {
+          return res.status(201).send('Product updated successfully!')
+        } else {
+          return res.status(404).send('Could not update product!')
+        }
+      })
+    } else {
+      return res.status(404).send('Could not update product!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    // const user = await User.findAll({where: {id: parseInt(req.params.id)}})
+    // if (user[0]) {
+    //   const profile = await user[0].getProfile()
+    //   if (profile) {
+    //     profile.destroy()
+    //   }
+    //   user[0].destroy()
+      return res.send('Product deleted successfully!')
+    // } else {
+    //   return res.status(404).send('User not found!')
+    // }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")

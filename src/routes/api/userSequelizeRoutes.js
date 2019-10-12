@@ -3,6 +3,11 @@ const router = new express.Router()
 
 const userSequelizeController = require('../../controllers/userSequelizeController')
 
+router.get('/products', userSequelizeController.getAllProducts)
+router.post('/products', userSequelizeController.createProduct)
+router.put('/products/:id', userSequelizeController.updateProduct)
+router.delete('/products/:id', userSequelizeController.deleteProduct)
+
 router.get('/', userSequelizeController.getUsers)
 router.get('/:id', userSequelizeController.getUser)
 router.post('/', userSequelizeController.addUser)
