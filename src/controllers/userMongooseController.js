@@ -1,4 +1,7 @@
 const bcrypt = require('bcrypt')
+const fs = require('fs')
+const path = require('path')
+const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
 const mailer = require('../config/mailer')
@@ -236,6 +239,85 @@ exports.addNewProduct = async (req, res) => {
       })
     } else {
       return res.status(404).send('User not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.addNewProductImage = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+    if (product) {
+      const productImage = req.file
+      if (productImage) {
+        const product = await Product.findByIdAndUpdate(req.params.id, {
+          image: productImage.path
+        }, {useFindAndModify: false})
+        if (product) {
+          return res.status(201).send('Image assigned to product successfully!')
+        } else {
+          return res.status(404).send('No image found to upload!')
+        }
+      } else {
+        return res.status(404).send('No image found to upload!')
+      }
+    } else {
+      return res.status(404).send('Product not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.getProductImage = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+    if (product) {
+      /**** Sending file path in response */
+      // return res.status(200).send(product.image)
+
+      /**** Reading the entire file to make it available for users */
+      // fs.readFile(path.join(path.dirname(process.mainModule.filename), product.image), (err, data) => {
+      //   if (err) {
+      //     return res.status(404).send("File not found!")
+      //   }
+      //   res.setHeader('Content-Type', 'application/jpg')
+      //   res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
+      //   return res.status(200).send(data)
+      // })
+
+      /**** Streaming the file for users */
+      const file = fs.createReadStream(path.join(path.dirname(process.mainModule.filename), product.image))
+      res.setHeader('Content-Type', 'application/jpg')
+      res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
+      file.pipe(res)
+    } else {
+      return res.status(404).send('Product not found!')
+    }
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send("Something went wrong!")
+  }
+}
+
+exports.generatePDF = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+    if (product) {
+      const pdfDoc = new PDFDocument()
+      const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader('Content-Disposition', `inline; filename=${pdf}`)
+      pdfDoc.pipe(fs.createWriteStream(path.join(path.dirname(process.mainModule.filename), 'src/public/files/images', pdf)))
+      pdfDoc.pipe(res)
+      pdfDoc.text("Hello World!")
+      pdfDoc.fontSize(18).text("Hello World!", {
+        underline: true
+      })
+      pdfDoc.end()
     }
   } catch (error) {
     console.error(error)
