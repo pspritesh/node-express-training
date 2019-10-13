@@ -11,12 +11,12 @@ require('dotenv').config()
 const app = express()
 // const csrfProtection = csrf()
 
-/* Custom modules */
+/**** Custom modules */
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
-/* Custom modules */
+/**** Custom modules */
 
 // Best practices app settings
 app.set('title', process.env.APP_NAME)
@@ -76,13 +76,13 @@ app.set('etag', 'strong')
 //   saveUninitialized: false
 // }))
 
-/* CSRF Configuration */
+/**** CSRF Configuration */
 // Enables CSRF protection for forms
 // app.use(csrfProtection)
 
 // Pass CSRF field value to each Views globally so that it can be used in forms
 // app.use((req, res, next) => res.locals.csrfToken = req.csrfToken())
-/* CSRF Configuration */
+/**** CSRF Configuration */
 
 // To use flash messages in our project
 // app.use(flash())
@@ -90,10 +90,10 @@ app.set('etag', 'strong')
 // Handles routes in the app
 app.use(routes)
 
-/* eslint-disable no-unused-vars */
+/**** eslint-disable no-unused-vars */
 // error handler
 app.use((err, req, res, next) => res.status(err.status || 500).json(err.message || 'Internal Server Error'))
-/* eslint-enable no-unused-vars */
+/**** eslint-enable no-unused-vars */
 
 // Establishes all relations for Sequelize
 sequelizeRelations.config()
