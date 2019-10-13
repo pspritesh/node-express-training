@@ -14,16 +14,16 @@ exports.getUsers = async (req, res) => {
     const userCount = await User.find().countDocuments()
     const users = await User.find().skip(((req.query.page ? req.query.page : 1) - 1) * itemsPerPage).limit(itemsPerPage)
     if (users.length) {
-      return res.send({
+      return res.json({
         data: users,
         totalPages: Math.ceil(userCount/itemsPerPage)
       })
     } else {
-      return res.status(404).send('No users found!')
+      return res.status(404).json('No users found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -31,13 +31,13 @@ exports.getUser = async (req, res) => {
   try {
     const data = await User.findById(req.params.id)
     if (data) {
-      return res.send(data)
+      return res.json(data)
     } else {
-      return res.status(404).send('User not found!')
+      return res.status(404).json('User not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -77,17 +77,17 @@ exports.addUser = async (req, res) => {
               Thank you for joining us. Good luck.<br>
             </p>`
           ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-          return res.status(201).send('User added successfully!')
+          return res.status(201).json('User added successfully!')
         } else {
-          return res.status(404).send('Something went wrong!')
+          return res.status(404).json('Something went wrong!')
         }
       } else {
-        return res.status(404).send('Username is already taken, please choose a unique one!')
+        return res.status(404).json('Username is already taken, please choose a unique one!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -112,14 +112,14 @@ exports.updateUser = async (req, res) => {
         apiToken: randomstring.generate()
       }, {useFindAndModify: false})
       if (user) {
-        return res.status(201).send('User updated successfully!')
+        return res.status(201).json('User updated successfully!')
       } else {
-        return res.status(404).send('Nothing to update!')
+        return res.status(404).json('Nothing to update!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -127,13 +127,13 @@ exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id, {useFindAndModify: false})
     if (user) {
-      return res.send('User delete successfully!')
+      return res.json('User delete successfully!')
     } else {
-      return res.status(404).send('Nothing to delete!')
+      return res.status(404).json('Nothing to delete!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -143,16 +143,16 @@ exports.getAllProducts = async (req, res) => {
     const productCount = await Product.find().countDocuments()
     const products = await Product.find().skip(((req.query.page ? req.query.page : 1) - 1) * itemsPerPage).limit(itemsPerPage)
     if (products.length) {
-      return res.send({
+      return res.json({
         data: products,
         totalPages: Math.ceil(productCount/itemsPerPage)
       })
     } else {
-      return res.status(404).send('No products found!')
+      return res.status(404).json('No products found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -160,13 +160,13 @@ exports.getUserProducts = async (req, res) => {
   try {
     const userProducts = await User.findById(req.params.id).select('products -_id').populate('products')
     if (userProducts) {
-      return res.send(userProducts)
+      return res.json(userProducts)
     } else {
-      return res.status(404).send('Products not found!')
+      return res.status(404).json('Products not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -184,14 +184,14 @@ exports.createProduct = async (req, res) => {
         description: parsedBody.description
       })
       if (data) {
-        return res.status(201).send('Product added successfully!')
+        return res.status(201).json('Product added successfully!')
       } else {
-        return res.status(404).send('Could not add product!')
+        return res.status(404).json('Could not add product!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -209,14 +209,14 @@ exports.updateProduct = async (req, res) => {
         description: parsedBody.description
       }, {useFindAndModify: false})
       if (product) {
-        return res.status(201).send('Product updated successfully!')
+        return res.status(201).json('Product updated successfully!')
       } else {
-        return res.status(404).send('Product not updated!')
+        return res.status(404).json('Product not updated!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -239,20 +239,20 @@ exports.addNewProduct = async (req, res) => {
           userData.products.push(product)
           const user = await User.findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
           if (user) {
-            return res.status(201).send('Product created and assigned to user successfully!')
+            return res.status(201).json('Product created and assigned to user successfully!')
           } else {
-            return res.status(404).send('Could not assign product to user!')
+            return res.status(404).json('Could not assign product to user!')
           }
         } else {
-          return res.status(404).send('Could not create product!')
+          return res.status(404).json('Could not create product!')
         }
       })
     } else {
-      return res.status(404).send('User not found!')
+      return res.status(404).json('User not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -266,19 +266,19 @@ exports.addNewProductImage = async (req, res) => {
           image: productImage.path
         }, {useFindAndModify: false})
         if (product) {
-          return res.status(201).send('Image assigned to product successfully!')
+          return res.status(201).json('Image assigned to product successfully!')
         } else {
-          return res.status(404).send('No image found to upload!')
+          return res.status(404).json('No image found to upload!')
         }
       } else {
-        return res.status(404).send('No image found to upload!')
+        return res.status(404).json('No image found to upload!')
       }
     } else {
-      return res.status(404).send('Product not found!')
+      return res.status(404).json('Product not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -287,16 +287,16 @@ exports.getProductImage = async (req, res) => {
     const product = await Product.findById(req.params.id)
     if (product) {
       /**** Sending file path in response */
-      // return res.status(200).send(product.image)
+      // return res.status(200).json(product.image)
 
       /**** Reading the entire file to make it available for users */
       // fs.readFile(path.join(path.dirname(process.mainModule.filename), product.image), (err, data) => {
       //   if (err) {
-      //     return res.status(404).send("File not found!")
+      //     return res.status(404).json("File not found!")
       //   }
       //   res.setHeader('Content-Type', 'application/jpg')
       //   res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
-      //   return res.status(200).send(data)
+      //   return res.status(200).json(data)
       // })
 
       /**** Streaming the file for users */
@@ -305,11 +305,11 @@ exports.getProductImage = async (req, res) => {
       res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
       file.pipe(res)
     } else {
-      return res.status(404).send('Product not found!')
+      return res.status(404).json('Product not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -331,7 +331,7 @@ exports.generatePDF = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -346,19 +346,19 @@ exports.assignProduct = async (req, res) => {
         // user.products.push(product._doc)
         const newUserData = await User.findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
         if (newUserData) {
-          return res.status(201).send('Product assigned successfully!')
+          return res.status(201).json('Product assigned successfully!')
         } else {
-          return res.status(404).send('Could not assign product to user!')
+          return res.status(404).json('Could not assign product to user!')
         }
       } else {
-        return res.status(404).send('Product not found!')
+        return res.status(404).json('Product not found!')
       }
     } else {
-      return res.status(404).send('User not found!')
+      return res.status(404).json('User not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -379,15 +379,15 @@ exports.deleteProduct = async (req, res) => {
       })
       const deleteProduct = await Product.findByIdAndDelete(req.params.id, {useFindAndModify: false})
       if (deleteProduct) {
-        return res.send((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
+        return res.json((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
       } else {
-        return res.status(404).send("Unable to delete product!")
+        return res.status(404).json("Unable to delete product!")
       }
     } else {
-      return res.status(404).send("No product to delete!")
+      return res.status(404).json("No product to delete!")
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }

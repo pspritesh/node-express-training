@@ -6,13 +6,13 @@ exports.getUsers = async (req, res) => {
   try {
     data = await user.getAll()
     if (data[0].length) {
-      return res.send(data[0])
+      return res.json(data[0])
     } else {
-      return res.status(404).send('No users found!')
+      return res.status(404).json('No users found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -21,13 +21,13 @@ exports.getUser = async (req, res) => {
   try {
     data = await user.get(parseInt(req.params.id))
     if (data[0].length) {
-      return res.send(data[0])
+      return res.json(data[0])
     } else {
-      return res.status(404).send('No users found!')
+      return res.status(404).json('No users found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -55,14 +55,14 @@ exports.addUser = async (req, res) => {
             Thank you for joining us. Good luck.<br>
           </p>`
         ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-        return res.status(201).send('User added successfully!')
+        return res.status(201).json('User added successfully!')
       } else {
-        return res.status(404).send('Could not add user!')
+        return res.status(404).json('Could not add user!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -77,14 +77,14 @@ exports.updateUser = async (req, res) => {
       const parsedBody = JSON.parse(Buffer.concat(body).toString())
       data = await user.update(parsedBody, parseInt(req.params.id))
       if (data && data[0].affectedRows) {
-        return res.status(201).send('User updated successfully!')
+        return res.status(201).json('User updated successfully!')
       } else {
-        return res.status(404).send('User not found!')
+        return res.status(404).json('User not found!')
       }
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }
 
@@ -93,12 +93,12 @@ exports.deleteUser = async (req, res) => {
   try {
     data = await user.delete(parseInt(req.params.id))
     if (data && data[0].affectedRows) {
-      return res.send('User deleted successfully!')
+      return res.json('User deleted successfully!')
     } else {
-      return res.status(404).send('User not found!')
+      return res.status(404).json('User not found!')
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }

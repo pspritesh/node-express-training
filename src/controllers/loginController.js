@@ -21,10 +21,10 @@ exports.postLogin = async (req, res, next) => {
           : ''
         )
       // const token = await mongooseUsers.filter(async user => await bcrypt.compare(parsedBody.password, user.password)).map(user => user.apiToken)
-      return res.status(token ? 200 : 404).send(token ? token[0] : 'User not found!')
+      return res.status(token ? 200 : 404).json(token ? token[0] : 'User not found!')
     })
   } catch (error) {
     console.error(error)
-    return res.status(500).send("Something went wrong!")
+    return res.status(500).json("Something went wrong!")
   }
 }

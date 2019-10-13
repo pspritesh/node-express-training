@@ -12,10 +12,10 @@ exports.custom = async (req, res, next) => {
       if (user.length) {
         next()
       } else {
-        return res.status(401).send('Not authenticated!')
+        return res.status(401).json('Not authenticated!')
       }
     }
   } else {
-    return res.status(401).send('Not authenticated!')
+    return res.status(401).json('Not authenticated!')
   }
 }

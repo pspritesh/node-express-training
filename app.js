@@ -88,7 +88,7 @@ app.use(routes)
 
 /* eslint-disable no-unused-vars */
 // error handler
-app.use((err, req, res, next) => res.status(err.status || 500).send(err.message || 'Internal Server Error'))
+app.use((err, req, res, next) => res.status(err.status || 500).json(err.message || 'Internal Server Error'))
 /* eslint-enable no-unused-vars */
 
 // Establishes all relations for Sequelize
