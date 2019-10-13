@@ -21,6 +21,9 @@ exports.getUsers = async (req, res) => {
       include: [{
         model: Profile,
         attributes: ['fname', 'mname', 'lname']
+      },
+      {
+        model: Product
       }]
     })
     res.send({
@@ -191,14 +194,13 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
   try {
-    const user = await User.findAll({where: {id: parseInt(req.params.id)}})
-    if (user.length) {
-      const products = await user[0].getProducts()
-      if (products.length) {
-        return res.send(products)
-      } else {
-        return res.status(404).send('No products found!')
-      }
+    const userProducts = await User.findAll({
+      where: {id: parseInt(req.params.id)},
+      attributes: [],
+      include: [Product]
+    })
+    if (userProducts.length) {
+      return res.send(userProducts)
     } else {
       return res.status(404).send('User not found!')
     }
@@ -235,33 +237,28 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await Product.findAll({ where: {id: parseInt(req.params.id)} })
-    if (product) {
-      const body = []
-      req.on('data', chunk => {
-        body.push(chunk)
-      })
-      req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString())
-        const product = await Product.update(
-          {
-            name: parsedBody.name,
-            price: parsedBody.price,
-            description: parsedBody.description
-          },
-          {
-            where: {id: parseInt(req.params.id)}
-          }
-        )
-        if (product) {
-          return res.status(201).send('Product updated successfully!')
-        } else {
-          return res.status(404).send('Could not update product!')
+    const body = []
+    req.on('data', chunk => {
+      body.push(chunk)
+    })
+    req.on('end', async () => {
+      const parsedBody = JSON.parse(Buffer.concat(body).toString())
+      const product = await Product.update(
+        {
+          name: parsedBody.name,
+          price: parsedBody.price,
+          description: parsedBody.description
+        },
+        {
+          where: {id: parseInt(req.params.id)}
         }
-      })
-    } else {
-      return res.status(404).send('Could not update product!')
-    }
+      )
+      if (product) {
+        return res.status(201).send('Product updated successfully!')
+      } else {
+        return res.status(404).send('Could not update product!')
+      }
+    })
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
