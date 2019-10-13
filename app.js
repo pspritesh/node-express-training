@@ -39,7 +39,10 @@ app.use((req, res, next) => {
 })
 
 // Form encryption application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.urlencoded({ extended: false }))
+
+// POST routes/APIs data in application/json format
+app.use(bodyParser.json())
 
 // Multer callback for storing files in proper naming convension
 const fileStorage = multer.diskStorage({
