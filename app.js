@@ -12,7 +12,6 @@ const app = express()
 // const csrfProtection = csrf()
 
 /* Custom modules */
-const error404Controller = require('./src/controllers/error404Controller')
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
@@ -86,9 +85,6 @@ app.set('etag', 'strong')
 
 // Handles routes in the app
 app.use(routes)
-
-// Handles 404 requests
-app.use(error404Controller.error404)
 
 /* eslint-disable no-unused-vars */
 // error handler
