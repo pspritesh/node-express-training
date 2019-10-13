@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 /**** Setting up the CORS for app */
 
 // Form encryption application/x-www-form-urlencoded
-// app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // POST routes/APIs data in application/json format
 app.use(bodyParser.json())
