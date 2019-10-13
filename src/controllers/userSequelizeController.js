@@ -158,7 +158,6 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    // const user = await User.destroy({where: {id: parseInt(req.params.id)}})
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
     if (user[0]) {
       const profile = await user[0].getProfile()
@@ -267,17 +266,12 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    // const user = await User.findAll({where: {id: parseInt(req.params.id)}})
-    // if (user[0]) {
-    //   const profile = await user[0].getProfile()
-    //   if (profile) {
-    //     profile.destroy()
-    //   }
-    //   user[0].destroy()
-      return res.send('Product deleted successfully!')
-    // } else {
-    //   return res.status(404).send('User not found!')
-    // }
+    const product = await Product.destroy({ where: {id: parseInt(req.params.id)} })
+    if (product) {
+      return res.send('Product deleted and cascaded successfully!')
+    } else {
+      return res.status(404).send('Product not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).send("Something went wrong!")
