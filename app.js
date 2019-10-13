@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname, './src/views'))
 // Define templating engine for app
 app.set("view engine", "pug")
 
-// Handling CORS requests
+/**** Setting up the CORS for app */
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL)
   res.header("Access-Control-Allow-Headers", "Origin, Authorization, X-Requested-With, Content-Type, Accept")
@@ -38,6 +38,7 @@ app.use((req, res, next) => {
     next()
   }
 })
+/**** Setting up the CORS for app */
 
 // Form encryption application/x-www-form-urlencoded
 // app.use(bodyParser.urlencoded({ extended: false }))
