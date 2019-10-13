@@ -1,15 +1,11 @@
 const bodyParser = require('body-parser')
-// const csrf = require('csurf')
 const express = require('express')
-// const flash = require('connect-flash')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const path = require('path')
-// const session = require('express-session')
 require('dotenv').config()
 
 const app = express()
-// const csrfProtection = csrf()
 
 /**** Custom modules */
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
@@ -69,24 +65,6 @@ app.use(express.static(path.join(__dirname, 'src/public')))
 
 app.enable('etag') // use strong etags
 app.set('etag', 'strong')
-
-// Express Session
-// app.use(session({
-//   secret: 'secret',
-//   resave: false,
-//   saveUninitialized: false
-// }))
-
-/**** CSRF Configuration */
-// Enables CSRF protection for forms
-// app.use(csrfProtection)
-
-// Pass CSRF field value to each Views globally so that it can be used in forms
-// app.use((req, res, next) => res.locals.csrfToken = req.csrfToken())
-/**** CSRF Configuration */
-
-// To use flash messages in our project
-// app.use(flash())
 
 // Handles routes in the app
 app.use(routes)
