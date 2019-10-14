@@ -60,53 +60,46 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-      const user = await User.findAll({where: {username: parsedBody.username}})
-      if (!user.length) {
-        const user = await User.create({
-          username: parsedBody.username,
-          email: parsedBody.email,
-          password: hashedPassword,
-          api_token: randomstring.generate(),
-          api_token_created_at: datetime.create().format('Y-m-d H:M:S')
+    const hashedPassword = await bcrypt.hash(req.body.password, 256)
+    const user = await User.findAll({where: {username: req.body.username}})
+    if (!user.length) {
+      const user = await User.create({
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        api_token: randomstring.generate(),
+        api_token_created_at: datetime.create().format('Y-m-d H:M:S')
+      })
+      if (user) {
+        const profile = await user.createProfile({
+          fname: req.body.fname,
+          mname: req.body.mname,
+          lname: req.body.lname
         })
-        if (user) {
-          const profile = await user.createProfile({
-            fname: parsedBody.fname,
-            mname: parsedBody.mname,
-            lname: parsedBody.lname
-          })
-          if (profile) {
-            mailer.sendMail(
-              parsedBody.email,
-              process.env.EMAIL_FROM_ADDRESS,
-              'Node App Signin',
-              `<p>
-                Hi ${parsedBody.fname},<br>
-                Your account has been created successfully.<br>
-                Please find your credentials mentioned below :<br>
-                Username: ${parsedBody.username}<br>
-                Password: ${parsedBody.password}<br>
-                Thank you for joining us. Good luck.<br>
-              </p>`
-            ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-            return res.status(201).json('User added successfully!')
-          } else {
-            return res.status(404).json('Could not create profile for user!')
-          }
+        if (profile) {
+          mailer.sendMail(
+            req.body.email,
+            process.env.EMAIL_FROM_ADDRESS,
+            'Node App Signin',
+            `<p>
+              Hi ${req.body.fname},<br>
+              Your account has been created successfully.<br>
+              Please find your credentials mentioned below :<br>
+              Username: ${req.body.username}<br>
+              Password: ${req.body.password}<br>
+              Thank you for joining us. Good luck.<br>
+            </p>`
+          ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+          return res.status(201).json('User added successfully!')
         } else {
-          return res.status(404).json('Could not create user!')
+          return res.status(404).json('Could not create profile for user!')
         }
       } else {
-        return res.status(404).json('Username is already taken, please choose a unique one!')
+        return res.status(404).json('Could not create user!')
       }
-    })
+    } else {
+      return res.status(404).json('Username is already taken, please choose a unique one!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -117,28 +110,22 @@ exports.updateUser = async (req, res) => {
   try {
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
     if (user) {
-      const body = []
-      req.on('data', chunk => {
-        body.push(chunk)
-      })
-      req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString())
-        const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-        user[0].username = parsedBody.username
-        user[0].email = parsedBody.email
+      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+        user[0].username = req.body.username
+        user[0].email = req.body.email
         user[0].password = hashedPassword
         user[0].save()
         const profile = await user[0].getProfile()
         if (profile) {
-          profile.fname = parsedBody.fname
-          profile.mname = parsedBody.mname
-          profile.lname = parsedBody.lname
+          profile.fname = req.body.fname
+          profile.mname = req.body.mname
+          profile.lname = req.body.lname
           profile.save()
         } else {
           profile = await user.createProfile({
-            fname: parsedBody.fname,
-            mname: parsedBody.mname,
-            lname: parsedBody.lname
+            fname: req.body.fname,
+            mname: req.body.mname,
+            lname: req.body.lname
           })
         }
         if (profile) {
@@ -146,7 +133,6 @@ exports.updateUser = async (req, res) => {
         } else {
           return res.status(404).json('Could not update profile of user!')
         }
-      })
     } else {
       return res.status(404).json('Could not update user!')
     }
@@ -211,23 +197,16 @@ exports.getProduct = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
+    const product = await Product.create({
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description
     })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const product = await Product.create({
-        name: parsedBody.name,
-        price: parsedBody.price,
-        description: parsedBody.description
-      })
-      if (product) {
-        return res.status(201).json('Product added successfully!')
-      } else {
-        return res.status(404).json('Could not create product!')
-      }
-    })
+    if (product) {
+      return res.status(201).json('Product added successfully!')
+    } else {
+      return res.status(404).json('Could not create product!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -236,28 +215,21 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const product = await Product.update(
-        {
-          name: parsedBody.name,
-          price: parsedBody.price,
-          description: parsedBody.description
-        },
-        {
-          where: {id: parseInt(req.params.id)}
-        }
-      )
-      if (product) {
-        return res.status(201).json('Product updated successfully!')
-      } else {
-        return res.status(404).json('Could not update product!')
+    const product = await Product.update(
+      {
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description
+      },
+      {
+        where: {id: parseInt(req.params.id)}
       }
-    })
+    )
+    if (product) {
+      return res.status(201).json('Product updated successfully!')
+    } else {
+      return res.status(404).json('Could not update product!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -282,23 +254,16 @@ exports.addNewProduct = async (req, res) => {
   try {
     const user = await User.findAll({where: {id: parseInt(req.params.id)}})
     if (user.length) {
-      const body = []
-      req.on('data', chunk => {
-        body.push(chunk)
+      const product = await user[0].createProduct({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
       })
-      req.on('end', async () => {
-        const productData = JSON.parse(Buffer.concat(body).toString())
-        const product = await user[0].createProduct({
-          name: productData.name,
-          price: productData.price,
-          description: productData.description,
-        })
-        if (product) {
-          return res.status(201).json('Product created successfully!')
-        } else {
-          return res.status(404).json('Could not create product for user!')
-        }
-      })
+      if (product) {
+        return res.status(201).json('Product created successfully!')
+      } else {
+        return res.status(404).json('Could not create product for user!')
+      }
     } else {
       return res.status(404).json('User not found!')
     }

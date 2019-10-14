@@ -22,36 +22,22 @@ exports.getProduct = async (req, res) => {
   }
 }
 
-exports.addProduct = (req, res) => {
+exports.addProduct = async (req, res) => {
   const product = new Product()
-  const body = []
   try {
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      data = await product.save(parsedBody)
-      return res.json(data)
-    })
+    data = await product.save(req.body)
+    return res.json(data)
   } catch (error) {
     console.error(error)
     return res.json("Something went wrong!")
   }
 }
 
-exports.updateProduct = (req, res) => {
+exports.updateProduct = async (req, res) => {
   const product = new Product()
-  const body = []
   try {
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      data = await product.update(parsedBody, parseInt(req.params.id))
-      return res.json(data)
-    })
+    data = await product.update(req.body, parseInt(req.params.id))
+    return res.json(data)
   } catch (error) {
     console.error(error)
     return res.json("Something went wrong!")

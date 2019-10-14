@@ -33,33 +33,26 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   const user = new User()
-  const body = []
   try {
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      data = await user.save(parsedBody)
-      if (data && data[0].affectedRows) {
-        mailer.sendMail(
-          parsedBody.email,
-          process.env.EMAIL_FROM_ADDRESS,
-          'Node App Signin',
-          `<p>
-            Hi ${parsedBody.fname},<br>
-            Your account has been created successfully.<br>
-            Please find your credentials mentioned below :<br>
-            Username: ${parsedBody.username}<br>
-            Password: ${parsedBody.password}<br>
-            Thank you for joining us. Good luck.<br>
-          </p>`
-        ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-        return res.status(201).json('User added successfully!')
-      } else {
-        return res.status(404).json('Could not add user!')
-      }
-    })
+    data = await user.save(req.body)
+    if (data && data[0].affectedRows) {
+      mailer.sendMail(
+        req.body.email,
+        process.env.EMAIL_FROM_ADDRESS,
+        'Node App Signin',
+        `<p>
+          Hi ${req.body.fname},<br>
+          Your account has been created successfully.<br>
+          Please find your credentials mentioned below :<br>
+          Username: ${req.body.username}<br>
+          Password: ${req.body.password}<br>
+          Thank you for joining us. Good luck.<br>
+        </p>`
+      ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+      return res.status(201).json('User added successfully!')
+    } else {
+      return res.status(404).json('Could not add user!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -68,20 +61,13 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const user = new User()
-  const body = []
   try {
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      data = await user.update(parsedBody, parseInt(req.params.id))
-      if (data && data[0].affectedRows) {
-        return res.status(201).json('User updated successfully!')
-      } else {
-        return res.status(404).json('User not found!')
-      }
-    })
+    data = await user.update(req.body, parseInt(req.params.id))
+    if (data && data[0].affectedRows) {
+      return res.status(201).json('User updated successfully!')
+    } else {
+      return res.status(404).json('User not found!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")

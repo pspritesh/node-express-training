@@ -14,6 +14,11 @@ module.exports = class User {
     return db.collection('users').findOne({_id: new mongodb.ObjectId(id)})
   }
 
+  getByName(name) {
+    const db = getDB()
+    return db.collection('users').findOne({name: name})
+  }
+
   save(user) {
     const db = getDB()
     // return db.collection('users').insertOne(user).then(result => result).catch(err => console.log(err))

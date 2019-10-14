@@ -43,48 +43,41 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-      const data = await User.find({ username: parsedBody.username })
-      if (!data.length) {
-        const user = await User.create({
-          profile: {
-            fname: parsedBody.fname,
-            mname: parsedBody.mname,
-            lname: parsedBody.lname
-          },
-          username: parsedBody.username,
-          email: parsedBody.email,
-          password: hashedPassword,
-          apiToken: randomstring.generate()
-        })
-        if (user) {
-          mailer.sendMail(
-            parsedBody.email,
-            process.env.EMAIL_FROM_ADDRESS,
-            'Node App Signin',
-            `<p>
-              Hi ${parsedBody.fname},<br>
-              Your account has been created successfully.<br>
-              Please find your credentials mentioned below :<br>
-              Username: ${parsedBody.username}<br>
-              Password: ${parsedBody.password}<br>
-              Thank you for joining us. Good luck.<br>
-            </p>`
-          ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-          return res.status(201).json('User added successfully!')
-        } else {
-          return res.status(404).json('Something went wrong!')
-        }
+    const data = await User.find({ username: req.body.username })
+    if (!data.length) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+      const user = await User.create({
+        profile: {
+          fname: req.body.fname,
+          mname: req.body.mname,
+          lname: req.body.lname
+        },
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        apiToken: randomstring.generate()
+      })
+      if (user) {
+        mailer.sendMail(
+          req.body.email,
+          process.env.EMAIL_FROM_ADDRESS,
+          'Node App Signin',
+          `<p>
+            Hi ${req.body.fname},<br>
+            Your account has been created successfully.<br>
+            Please find your credentials mentioned below :<br>
+            Username: ${req.body.username}<br>
+            Password: ${req.body.password}<br>
+            Thank you for joining us. Good luck.<br>
+          </p>`
+        ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+        return res.status(201).json('User added successfully!')
       } else {
-        return res.status(404).json('Username is already taken, please choose a unique one!')
+        return res.status(404).json('Something went wrong!')
       }
-    })
+    } else {
+      return res.status(404).json('Username is already taken, please choose a unique one!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -93,30 +86,23 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const hashedPassword = await bcrypt.hash(parsedBody.password, 256)
-      const user = await User.findByIdAndUpdate(req.params.id, {
-        profile: {
-          fname: parsedBody.fname,
-          mname: parsedBody.mname,
-          lname: parsedBody.lname
-        },
-        username: parsedBody.username,
-        email: parsedBody.email,
-        password: hashedPassword,
-        apiToken: randomstring.generate()
-      }, {useFindAndModify: false})
-      if (user) {
-        return res.status(201).json('User updated successfully!')
-      } else {
-        return res.status(404).json('Nothing to update!')
-      }
-    })
+    const hashedPassword = await bcrypt.hash(req.body.password, 256)
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      profile: {
+        fname: req.body.fname,
+        mname: req.body.mname,
+        lname: req.body.lname
+      },
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword,
+      apiToken: randomstring.generate()
+    }, {useFindAndModify: false})
+    if (user) {
+      return res.status(201).json('User updated successfully!')
+    } else {
+      return res.status(404).json('Nothing to update!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -172,23 +158,16 @@ exports.getUserProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
+    const data = await Product.create({
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description
     })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const data = await Product.create({
-        name: parsedBody.name,
-        price: parsedBody.price,
-        description: parsedBody.description
-      })
-      if (data) {
-        return res.status(201).json('Product added successfully!')
-      } else {
-        return res.status(404).json('Could not add product!')
-      }
-    })
+    if (data) {
+      return res.status(201).json('Product added successfully!')
+    } else {
+      return res.status(404).json('Could not add product!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -197,23 +176,16 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const body = []
-    req.on('data', chunk => {
-      body.push(chunk)
-    })
-    req.on('end', async () => {
-      const parsedBody = JSON.parse(Buffer.concat(body).toString())
-      const product = await Product.findByIdAndUpdate(req.params.id, {
-        name: parsedBody.name,
-        price: parsedBody.price,
-        description: parsedBody.description
-      }, {useFindAndModify: false})
-      if (product) {
-        return res.status(201).json('Product updated successfully!')
-      } else {
-        return res.status(404).json('Product not updated!')
-      }
-    })
+    const product = await Product.findByIdAndUpdate(req.params.id, {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description
+    }, {useFindAndModify: false})
+    if (product) {
+      return res.status(201).json('Product updated successfully!')
+    } else {
+      return res.status(404).json('Product not updated!')
+    }
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -224,29 +196,22 @@ exports.addNewProduct = async (req, res) => {
   try {
     const userData = await User.findById(req.params.id)
     if (userData) {
-      const body = []
-      req.on('data', chunk => {
-        body.push(chunk)
+      const product = await Product.create({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description
       })
-      req.on('end', async () => {
-        const parsedBody = JSON.parse(Buffer.concat(body).toString())
-        const product = await Product.create({
-          name: parsedBody.name,
-          price: parsedBody.price,
-          description: parsedBody.description
-        })
-        if (product) {
-          userData.products.push(product)
-          const user = await User.findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
-          if (user) {
-            return res.status(201).json('Product created and assigned to user successfully!')
-          } else {
-            return res.status(404).json('Could not assign product to user!')
-          }
+      if (product) {
+        userData.products.push(product)
+        const user = await User.findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
+        if (user) {
+          return res.status(201).json('Product created and assigned to user successfully!')
         } else {
-          return res.status(404).json('Could not create product!')
+          return res.status(404).json('Could not assign product to user!')
         }
-      })
+      } else {
+        return res.status(404).json('Could not create product!')
+      }
     } else {
       return res.status(404).json('User not found!')
     }
