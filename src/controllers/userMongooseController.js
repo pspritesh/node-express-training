@@ -43,8 +43,8 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const data = await User.find({ username: req.body.username })
-    if (!data.length) {
+    const data = await User.findOne({ username: req.body.username })
+    if (!data) {
       const hashedPassword = await bcrypt.hash(req.body.password, 256)
       const user = await User.create({
         profile: {
