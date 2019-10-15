@@ -7,8 +7,10 @@ const loginController = require('../controllers/loginController')
 const apiRoutes = require('./apiRoutes')
 const webRoutes = require('./webRoutes')
 
-router.post('/login', loginController.postLogin)
-router.use('/api', auth.custom, apiRoutes)
+// router.post('/login', loginController.postLogin)
+// router.use('/api', auth.custom, apiRoutes)
+router.post('/api/login', loginController.jwtLogin)
+router.use('/api', auth.jwtAuth, apiRoutes)
 router.use('/', webRoutes)
 
 // Handles 404 requests
