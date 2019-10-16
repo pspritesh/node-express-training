@@ -334,7 +334,7 @@ exports.deleteProduct = async (req, res) => {
       const userData = await User.find()
       count = 0
       userData.forEach(user => {
-        user.products.pull(product)
+        if (user.products.pull(product)) count++
         user.save()
       })
       const deleteProduct = await Product.findByIdAndDelete(req.params.id, {useFindAndModify: false})
