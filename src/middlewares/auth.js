@@ -39,3 +39,39 @@ exports.jwtAuth = (req, res, next) => {
     return res.status(401).json('Not authenticated!')
   }
 }
+
+exports.mongoAuthorize = async (req, res, next) => {
+  if (req.userId) {
+    try {
+      const data = await MongooseUser.findById(req.userId)
+      if (data) {
+        next()
+      } else {
+        return res.status(401).json('You are not authorised to access this page!')
+      }
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json('You are not authorised to access this page!')
+    }
+  } else {
+    return res.status(401).json('You are not authorised to access this page!')
+  }
+}
+
+exports.sqlAuthorize = async (req, res, next) => {
+  if (req.userId) {
+    try {
+      const user = await SequeliseUser.findAll({ where: {id: parseInt(req.userId)} })
+      if (user.length) {
+        next()
+      } else {
+        return res.status(401).json('You are not authorised to access this page!')
+      }
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json('You are not authorised to access this page!')
+    }
+  } else {
+    return res.status(401).json('You are not authorised to access this page!')
+  }
+}
