@@ -333,7 +333,7 @@ exports.deleteProduct = async (req, res) => {
     if (product) {
       const userData = await User.find()
       count = 0
-      userData.forEach(async user => {
+      userData.forEach(user => {
         user.products.pull(product)
         user.save()
       })
