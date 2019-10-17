@@ -125,13 +125,21 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const itemsPerPage = 4
-    const productCount = await Product.find().countDocuments()
-    const products = await Product.find().skip(((req.query.page ? req.query.page : 1) - 1) * itemsPerPage).limit(itemsPerPage)
+    const itemsPerPage = 1
+    const productCount = await Product.aggregate([
+      { $match: { price: { $gte: 10 } } },
+      { $group: { _id: "$name", total: { $sum: "$price" } } },
+    ])
+    const products = await Product.aggregate([
+      { $match: { price: { $gte: 10 } } },
+      { $group: { _id: "$name", total: { $sum: "$price" } } },
+      { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
+      { $limit: itemsPerPage }
+    ])
     if (products.length) {
       return res.json({
         data: products,
-        totalPages: Math.ceil(productCount/itemsPerPage)
+        totalPages: Math.ceil(productCount.length/itemsPerPage)
       })
     } else {
       return res.status(404).json('No products found!')
