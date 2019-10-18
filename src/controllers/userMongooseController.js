@@ -133,6 +133,7 @@ exports.getAllProducts = async (req, res) => {
     const products = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
       { $group: { _id: "$name", total: { $sum: "$price" } } },
+      // { $count: "count" },
       { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
       { $limit: itemsPerPage }
     ])
