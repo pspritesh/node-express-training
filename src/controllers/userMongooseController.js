@@ -125,15 +125,17 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const itemsPerPage = 1
+    const itemsPerPage = 4
     const productCount = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
-      { $group: { _id: "$name", total: { $sum: "$price" } } },
+      // { $group: { _id: "$name", total: { $sum: "$price" } } },
     ])
     const products = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
-      { $group: { _id: "$name", total: { $sum: "$price" } } },
+      // { $group: { _id: { name: "$name", total: { $sum: "$price" } } } },
       // { $count: "count" },
+      { $sort: { price: 1 } },
+      { $project: { name: 1, price: 1, about: "$description" } },
       { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
       { $limit: itemsPerPage }
     ])
