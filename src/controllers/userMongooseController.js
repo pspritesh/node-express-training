@@ -136,6 +136,7 @@ exports.getAllProducts = async (req, res) => {
       // { $count: "count" },
       { $sort: { price: 1 } },
       { $project: { name: 1, price: 1, about: "$description" } },
+      // { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "userDetails" } },
       { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
       { $limit: itemsPerPage }
     ])
