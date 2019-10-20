@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const express = require('express')
+const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const multer = require('multer')
@@ -17,6 +18,9 @@ const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
 
 // Logging of each request using morgan
 app.use(morgan('combined'))
+
+// Set some special response headers using helmet
+app.use(helmet())
 
 // Best practices app settings
 app.set('title', process.env.APP_NAME)

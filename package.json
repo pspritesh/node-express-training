@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.550.0",
+    "aws-sdk": "^2.553.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
@@ -21,6 +21,7 @@
     "express-handlebars": "^3.1.0",
     "express-session": "^1.17.0",
     "express-validator": "^6.2.0",
+    "helmet": "^3.21.1",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.5",
@@ -35,7 +36,7 @@
     "pm2": "^3.5.1",
     "pug": "^2.0.4",
     "randomstring": "^1.1.5",
-    "sequelize": "^5.19.7",
+    "sequelize": "^5.21.1",
     "sequelize-cli": "^5.5.0",
     "utf8": "^3.0.0"
   },
