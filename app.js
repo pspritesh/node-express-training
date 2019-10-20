@@ -1,3 +1,9 @@
+/**** Core modules */
+const fs = require('fs')
+const path = require('path')
+/**** Core modules */
+
+/**** 3rd party modules */
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const express = require('express')
@@ -5,10 +11,8 @@ const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const multer = require('multer')
-const path = require('path')
 require('dotenv').config()
-
-const app = express()
+/**** 3rd party modules */
 
 /**** Custom modules */
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
@@ -17,8 +21,13 @@ const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
 /**** Custom modules */
 
+const app = express()
+
+// Create log file for morgan which stores all the log data
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'src/logs', 'access.log'), { flags: 'a' })
+
 // Logging of each request using morgan
-app.use(morgan('combined'))
+app.use(morgan('combined', { stream: accessLogStream }))
 
 // Set some special response headers using helmet
 app.use(helmet())
