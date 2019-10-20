@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const mongoose = require('mongoose')
+const morgan = require('morgan')
 const multer = require('multer')
 const path = require('path')
 require('dotenv').config()
@@ -13,6 +14,9 @@ const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const sequelizeRelations = require('./src/helpers/sequelizeRelationshipHelper')
 /**** Custom modules */
+
+// Logging of each request using morgan
+app.use(morgan('combined'))
 
 // Best practices app settings
 app.set('title', process.env.APP_NAME)
