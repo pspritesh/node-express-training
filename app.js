@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser')
+const compression = require('compression')
 const express = require('express')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
@@ -21,6 +22,9 @@ app.use(morgan('combined'))
 
 // Set some special response headers using helmet
 app.use(helmet())
+
+// Compress the assets to be sent in response
+app.use(compression())
 
 // Best practices app settings
 app.set('title', process.env.APP_NAME)
