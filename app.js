@@ -100,7 +100,7 @@ sequelizeRelations.config()
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
   .then(() => {
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.HTTP_PORT, () => {
       console.log(`Find the server at: ${process.env.APP_URL}`)
     })
   })
@@ -108,7 +108,7 @@ sequelize.sync()
 
 // Connect to MongoDB
 mongoConnect(() => {
-  // app.listen(process.env.PORT, () => {
+  // app.listen(process.env.HTTP_PORT, () => {
   //   console.log(`Find the server at: ${process.env.APP_URL}`)
   // })
   console.log(`Connection has been established successfully with '${process.env.DB_NAME}' mongo database.`)
@@ -117,7 +117,7 @@ mongoConnect(() => {
 // Connect to Mongoose ODM
 mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
   .then(() => {
-    // app.listen(process.env.PORT, () => {
+    // app.listen(process.env.HTTP_PORT, () => {
     //   console.log(`Find the server at: ${process.env.APP_URL}`)
     // })
     console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
