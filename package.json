@@ -4,7 +4,7 @@
   "description": "Express app for complex node training.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "nodemon app"
   },
   "author": "",
@@ -42,6 +42,8 @@
     "utf8": "^3.0.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
     "nodemon": "^1.19.4"
   }
 }
