@@ -1,4 +1,4 @@
-const expect = require('chai').expect
+const { expect } = require('chai')
 
 it('Should add numbers correctly', () => {
   const num1 = 2, num2 = 3
