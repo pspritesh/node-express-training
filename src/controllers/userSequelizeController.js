@@ -26,7 +26,7 @@ exports.getUsers = async (req, res) => {
         model: Product
       }]
     })
-    res.json({
+    return res.json({
       data: users,
       totalPages: Math.ceil(allUsers.count/itemsPerPage)
     })
