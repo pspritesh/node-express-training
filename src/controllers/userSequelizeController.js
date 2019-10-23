@@ -21,10 +21,7 @@ exports.getUsers = async (req, res) => {
       include: [{
         model: Profile,
         attributes: ['fname', 'mname', 'lname']
-      },
-      {
-        model: Product
-      }]
+      }, Product]
     })
     res.json({
       data: users,
@@ -182,7 +179,13 @@ exports.getProduct = async (req, res) => {
     const userProducts = await User.findAll({
       where: { id: parseInt(req.params.id) },
       attributes: [],
-      include: [Product]
+      include: [{
+        model: Product,
+        attributes: ['id', 'name', 'description', 'image', 'price'],
+        through: {
+          attributes: []
+        }
+      }]
     })
     if (userProducts.length) {
       return res.json(userProducts)
