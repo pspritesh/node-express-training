@@ -1,6 +1,7 @@
-const bcrypt = require('bcrypt')
 const fs = require('fs')
 const path = require('path')
+
+const bcrypt = require('bcrypt')
 const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 

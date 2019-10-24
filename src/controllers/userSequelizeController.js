@@ -1,7 +1,8 @@
-const bcrypt = require('bcrypt')
-const datetime = require('node-datetime')
 const fs = require('fs')
 const path = require('path')
+
+const bcrypt = require('bcrypt')
+const datetime = require('node-datetime')
 const PDFDocument = require('pdfkit')
 const randomstring = require('randomstring')
 
