@@ -189,7 +189,11 @@ exports.getProduct = async (req, res) => {
       }]
     })
     if (userProducts.length) {
-      return res.json(userProducts)
+      if (userProducts[0].products.length) {
+        return res.json(userProducts)
+      } else {
+        return res.status(404).json('No products found for this user!')
+      }
     } else {
       return res.status(404).json('User not found!')
     }

@@ -13,7 +13,16 @@ exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
     const userCount = await User.find().countDocuments()
-    const users = await User.find().skip(((req.query.page ? req.query.page : 1) - 1) * itemsPerPage).limit(itemsPerPage)
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "products"
+        }
+      }
+    ])
     if (users.length) {
       return res.json({
         data: users,
