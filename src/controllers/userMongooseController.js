@@ -15,6 +15,7 @@ exports.getUsers = async (req, res) => {
     const itemsPerPage = 4
     const userCount = await User.find().countDocuments()
     const users = await User.aggregate([
+      { $project: { _id: 1, profile: 1, username: 1, email: 1, createdAt: 1, updatedAt: 1, products: 1 } },
       {
         $lookup: {
           from: "products",
@@ -42,6 +43,7 @@ exports.getUser = async (req, res) => {
   try {
     const data = await User.aggregate([
       { $match: { _id: new mongodb.ObjectId(req.params.id) } },
+      { $project: { _id: 1, profile: 1, username: 1, email: 1, createdAt: 1, updatedAt: 1, products: 1 } },
       {
         $lookup: {
           from: "products",
@@ -149,14 +151,13 @@ exports.getAllProducts = async (req, res) => {
     const itemsPerPage = 4
     const productCount = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
-      // { $group: { _id: "$name", total: { $sum: "$price" } } },
+      { $group: { _id: "$name", total: { $sum: "$price" } } },
     ])
     const products = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
-      // { $group: { _id: { name: "$name", total: { $sum: "$price" } } } },
+      { $group: { _id: { name: "$name", total: { $sum: "$price" } } } },
       // { $count: "count" },
       { $sort: { price: 1 } },
-      { $project: { name: 1, price: 1, about: "$description" } },
       { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
       { $limit: itemsPerPage }
     ])
