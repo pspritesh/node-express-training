@@ -51,7 +51,7 @@ exports.getUser = async (req, res) => {
         }
       }
     ])
-    if (data) {
+    if (data.length) {
       return res.json(data)
     } else {
       return res.status(404).json('User not found!')
