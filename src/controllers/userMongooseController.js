@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const bcrypt = require('bcrypt')
+const mongodb = require('mongodb')
 const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
@@ -13,7 +14,16 @@ exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
     const userCount = await User.find().countDocuments()
-    const users = await User.find().skip(((req.query.page ? req.query.page : 1) - 1) * itemsPerPage).limit(itemsPerPage)
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "products"
+        }
+      }
+    ])
     if (users.length) {
       return res.json({
         data: users,
@@ -30,7 +40,17 @@ exports.getUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const data = await User.findById(req.params.id)
+    const data = await User.aggregate([
+      { $match: { _id: new mongodb.ObjectId(req.params.id) } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products",
+          foreignField: "_id",
+          as: "products"
+        }
+      }
+    ])
     if (data) {
       return res.json(data)
     } else {
