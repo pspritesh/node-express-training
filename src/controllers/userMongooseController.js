@@ -16,6 +16,8 @@ exports.getUsers = async (req, res) => {
     const userCount = await User.find().countDocuments()
     const users = await User.aggregate([
       { $project: { _id: 1, profile: 1, username: 1, email: 1, createdAt: 1, updatedAt: 1, products: 1 } },
+      // 
+      { $unwind: "$products" },
       {
         $lookup: {
           from: "products",
@@ -23,7 +25,12 @@ exports.getUsers = async (req, res) => {
           foreignField: "_id",
           as: "products"
         }
-      }
+      },
+      // 
+      { $unwind: "$products" },
+      { $group: { '_id': '$_id', products: { $addToSet: '$products' } } },
+      { $project: { 'products.createdAt': 0, 'products.updatedAt': 0, 'products.__v': 0 } },
+      // 
     ])
     if (users.length) {
       return res.json({
