@@ -17,12 +17,21 @@ exports.getUsers = async (req, res) => {
     const allUsers = await User.findAndCountAll()
     const users = await User.findAll({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
+      include: [
+        {
+          model: Profile,
+          attributes: ['fname', 'mname', 'lname']
+        },
+        {
+          model: Product,
+          attributes: ['id', 'name', 'description', 'image', 'price'],
+          through: {
+            attributes: []
+          }
+        }
+      ],
       offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage,
-      limit: itemsPerPage,
-      include: [{
-        model: Profile,
-        attributes: ['fname', 'mname', 'lname']
-      }, Product]
+      limit: itemsPerPage
     })
     return res.json({
       data: users,
@@ -168,7 +177,6 @@ exports.getAllProducts = async (req, res) => {
       data: products,
       totalPages: Math.ceil(allProducts.count/itemsPerPage)
     })
-    res.json(products)
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
