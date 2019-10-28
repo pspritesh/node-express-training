@@ -15,7 +15,6 @@ exports.getUsers = async (req, res) => {
     const itemsPerPage = 4
     const userCount = await User.find().countDocuments()
     const users = await User.aggregate([
-      { $project: { _id: 1, profile: 1, username: 1, email: 1, createdAt: 1, updatedAt: 1, products: 1 } },
       {
         $lookup: {
           from: "products",
@@ -23,7 +22,28 @@ exports.getUsers = async (req, res) => {
           foreignField: "_id",
           as: "products"
         }
-      }
+      },
+      { $unwind: {
+        'path': '$products',
+        'preserveNullAndEmptyArrays': true
+      } },
+      { $group: {
+        _id: '$_id',
+        products: { $push: {
+          _id: '$products._id',
+          name: '$products.name',
+          price: '$products.price',
+          description: '$products.description',
+        } },
+        profile: { $first: '$profile' },
+        username: { $first: '$username' },
+        email: { $first: '$email' },
+        createdAt: { $first: '$createdAt' },
+        updatedAt: { $first: '$updatedAt' }
+      } },
+      { $sort: { _id: 1 } },
+      { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
+      { $limit: itemsPerPage }
     ])
     if (users.length) {
       return res.json({
@@ -43,7 +63,6 @@ exports.getUser = async (req, res) => {
   try {
     const data = await User.aggregate([
       { $match: { _id: new mongodb.ObjectId(req.params.id) } },
-      { $project: { _id: 1, profile: 1, username: 1, email: 1, createdAt: 1, updatedAt: 1, products: 1 } },
       {
         $lookup: {
           from: "products",
@@ -52,10 +71,13 @@ exports.getUser = async (req, res) => {
           as: "products"
         }
       },
-      { $unwind: '$products' },
+      { $unwind: {
+        'path': '$products',
+        'preserveNullAndEmptyArrays': true
+      } },
       { $group: {
-        _id : '$_id',
-        products : { $push : {
+        _id: '$_id',
+        products: { $push: {
           _id: '$products._id',
           name: '$products.name',
           price: '$products.price',
@@ -170,8 +192,7 @@ exports.getAllProducts = async (req, res) => {
     ])
     const products = await Product.aggregate([
       { $match: { price: { $gte: 10 } } },
-      { $group: { _id: { name: "$name", total: { $sum: "$price" } } } },
-      // { $count: "count" },
+      { $project: { _id: 1, name: 1, price: 1, about: '$description' } },
       { $sort: { price: 1 } },
       { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
       { $limit: itemsPerPage }
