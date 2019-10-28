@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
-const MongooseUser = require('../models/Mongoose/User')
 const SequelizeUser = require('../models/Sequelize/User')
 
 exports.custom = async (req, res, next) => {
@@ -10,7 +10,7 @@ exports.custom = async (req, res, next) => {
     if (user.length) {
       next()
     } else {
-      user = await MongooseUser.find({ apiToken: token })
+      user = await mongoose.model('user').find({ apiToken: token })
       if (user.length) {
         next()
       } else {
@@ -43,7 +43,7 @@ exports.jwtAuth = (req, res, next) => {
 exports.mongoAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const data = await MongooseUser.findById(req.userId)
+      const data = await mongoose.model('user').findById(req.userId)
       if (data) {
         next()
       } else {
