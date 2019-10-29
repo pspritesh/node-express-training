@@ -145,22 +145,27 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 256)
-    const user = await mongoose.model('user').findByIdAndUpdate(req.params.id, {
-      profile: {
-        fname: req.body.fname,
-        mname: req.body.mname,
-        lname: req.body.lname
-      },
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-      apiToken: randomstring.generate()
-    }, {useFindAndModify: false})
-    if (user) {
-      return res.status(201).json('User updated successfully!')
+    const data = await mongoose.model('user').findOne({ username: req.body.username })
+    if (!data || data._id === new mongodb.ObjectId(req.params.id)) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+      const user = await mongoose.model('user').findByIdAndUpdate(req.params.id, {
+        profile: {
+          fname: req.body.fname,
+          mname: req.body.mname,
+          lname: req.body.lname
+        },
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        apiToken: randomstring.generate()
+      }, {useFindAndModify: false})
+      if (user) {
+        return res.status(201).json('User updated successfully!')
+      } else {
+        return res.status(404).json('Nothing to update!')
+      }
     } else {
-      return res.status(404).json('Nothing to update!')
+      return res.status(404).json('Username is already taken, please choose a unique one!')
     }
   } catch (error) {
     console.error(error)

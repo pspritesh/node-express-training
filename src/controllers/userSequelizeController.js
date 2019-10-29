@@ -76,7 +76,7 @@ exports.addUser = async (req, res) => {
         api_token_created_at: datetime.create().format('Y-m-d H:M:S')
       })
       if (user) {
-        const profile = await sequelizeHelper.importModel('User').createProfile({
+        const profile = await user.createProfile({
           fname: req.body.fname,
           mname: req.body.mname,
           lname: req.body.lname
@@ -113,34 +113,38 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
-    if (user.length) {
-      console.log('user', user)
-      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+    const user = await sequelizeHelper.importModel('User').findAll({ where: { username: req.body.username } })
+    if (!user.length || user[0].id == parseInt(req.params.id)) {
+      const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
+      if (user && user.length) {
+        const hashedPassword = await bcrypt.hash(req.body.password, 256)
         user[0].username = req.body.username
         user[0].email = req.body.email
         user[0].password = hashedPassword
         user[0].save()
         const profile = await user[0].getProfile()
-        if (profile.length) {
+        if (profile && profile.length) {
           profile.fname = req.body.fname
           profile.mname = req.body.mname
           profile.lname = req.body.lname
           profile.save()
         } else {
-          profile = await sequelizeHelper.importModel('User').createProfile({
+          newProfile = await user[0].createProfile({
             fname: req.body.fname,
             mname: req.body.mname,
             lname: req.body.lname
           })
         }
-        if (profile) {
+        if (profile || newProfile) {
           return res.status(201).json('User updated successfully!')
         } else {
           return res.status(404).json('Could not update profile of user!')
         }
+      } else {
+        return res.status(404).json('Could not update user!')
+      }
     } else {
-      return res.status(404).json('Could not update user!')
+      return res.status(404).json('Username is already taken, please choose a unique one!')
     }
   } catch (error) {
     console.error(error)
