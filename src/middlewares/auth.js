@@ -1,12 +1,12 @@
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 
-const sequelizeHelper = require('../helpers/sequelizeHelper')
+const { importModel } = require('../helpers/sequelizeHelper')
 
 exports.custom = async (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1]
-    let user = await sequelizeHelper.importModel('User').findAll({ where: { api_token: token } })
+    let user = await importModel('User').findAll({ where: { api_token: token } })
     if (user.length) {
       next()
     } else {
@@ -61,7 +61,7 @@ exports.mongoAuthorize = async (req, res, next) => {
 exports.sqlAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const user = await sequelizeHelper.importModel('User').findAll({ where: {id: parseInt(req.userId)} })
+      const user = await importModel('User').findAll({ where: {id: parseInt(req.userId)} })
       if (user.length) {
         next()
       } else {

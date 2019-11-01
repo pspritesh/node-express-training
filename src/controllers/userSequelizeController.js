@@ -7,21 +7,21 @@ const PDFDocument = require('pdfkit')
 const randomstring = require('randomstring')
 
 const mailer = require('../config/mailer')
-const sequelizeHelper = require('../helpers/sequelizeHelper')
+const { importModel } = require('../helpers/sequelizeHelper')
 
 exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const allUsers = await sequelizeHelper.importModel('User').findAndCountAll()
-    const users = await sequelizeHelper.importModel('User').findAll({
+    const allUsers = await importModel('User').findAndCountAll()
+    const users = await importModel('User').findAll({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
       include: [
         {
-          model: sequelizeHelper.importModel('Profile'),
+          model: importModel('Profile'),
           attributes: ['fname', 'mname', 'lname']
         },
         {
-          model: sequelizeHelper.importModel('Product'),
+          model: importModel('Product'),
           attributes: ['id', 'name', 'description', 'image', 'price'],
           through: {
             attributes: []
@@ -43,11 +43,11 @@ exports.getUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({
+    const user = await importModel('User').findAll({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
       where: { id: parseInt(req.params.id) },
       include: [{
-        model: sequelizeHelper.importModel('Profile'),
+        model: importModel('Profile'),
         as: 'profile',
         attributes: ['fname', 'mname', 'lname']
       }]
@@ -66,9 +66,9 @@ exports.getUser = async (req, res) => {
 exports.addUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 256)
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { username: req.body.username } })
+    const user = await importModel('User').findAll({ where: { username: req.body.username } })
     if (!user.length) {
-      const user = await sequelizeHelper.importModel('User').create({
+      const user = await importModel('User').create({
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
@@ -113,9 +113,9 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { username: req.body.username } })
+    const user = await importModel('User').findAll({ where: { username: req.body.username } })
     if (!user.length || user[0].id == parseInt(req.params.id)) {
-      const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
+      const user = await importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
       if (user && user.length) {
         const hashedPassword = await bcrypt.hash(req.body.password, 256)
         user[0].username = req.body.username
@@ -154,7 +154,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
+    const user = await importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
     if (user[0]) {
       const profile = await user[0].getProfile()
       if (profile) {
@@ -174,8 +174,8 @@ exports.deleteUser = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const allProducts = await sequelizeHelper.importModel('Product').findAndCountAll()
-    const products = await sequelizeHelper.importModel('Product').findAll({ offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage, limit: itemsPerPage })
+    const allProducts = await importModel('Product').findAndCountAll()
+    const products = await importModel('Product').findAll({ offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage, limit: itemsPerPage })
     return res.json({
       data: products,
       totalPages: Math.ceil(allProducts.count/itemsPerPage)
@@ -188,11 +188,11 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
   try {
-    const userProducts = await sequelizeHelper.importModel('User').findAll({
+    const userProducts = await importModel('User').findAll({
       where: { id: parseInt(req.params.id) },
       attributes: [],
       include: [{
-        model: sequelizeHelper.importModel('Product'),
+        model: importModel('Product'),
         attributes: ['id', 'name', 'description', 'image', 'price'],
         through: {
           attributes: []
@@ -216,7 +216,7 @@ exports.getProduct = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').create({
+    const product = await importModel('Product').create({
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
@@ -234,7 +234,7 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').update(
+    const product = await importModel('Product').update(
       {
         name: req.body.name,
         price: req.body.price,
@@ -257,7 +257,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').destroy({ where: { id: parseInt(req.params.id) } })
+    const product = await importModel('Product').destroy({ where: { id: parseInt(req.params.id) } })
     if (product) {
       return res.json('Product deleted and cascaded successfully!')
     } else {
@@ -271,7 +271,7 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addNewProduct = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
+    const user = await importModel('User').findAll({ where: { id: parseInt(req.params.id) } })
     if (user.length) {
       const product = await user[0].createProduct({
         name: req.body.name,
@@ -294,7 +294,7 @@ exports.addNewProduct = async (req, res) => {
 
 exports.addNewProductImage = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
     if (product.length) {
       const productImage = req.file
       if (productImage) {
@@ -315,7 +315,7 @@ exports.addNewProductImage = async (req, res) => {
 
 exports.getProductImage = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
     if (product.length) {
       /**** Sending file path in response */
       // return res.status(200).json(product[0].image)
@@ -346,7 +346,7 @@ exports.getProductImage = async (req, res) => {
 
 exports.generatePDF = async (req, res) => {
   try {
-    const product = await sequelizeHelper.importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await importModel('Product').findAll({ where: { id: parseInt(req.params.id) } })
     if (product.length) {
       const pdfDoc = new PDFDocument()
       const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
@@ -368,9 +368,9 @@ exports.generatePDF = async (req, res) => {
 
 exports.assignProduct = async (req, res) => {
   try {
-    const user = await sequelizeHelper.importModel('User').findAll({ where: { id: parseInt(req.params.uid) } })
+    const user = await importModel('User').findAll({ where: { id: parseInt(req.params.uid) } })
     if (user.length) {
-      const product = await sequelizeHelper.importModel('Product').findAll({ where: { id: parseInt(req.params.pid) } })
+      const product = await importModel('Product').findAll({ where: { id: parseInt(req.params.pid) } })
       if (product.length) {
         data = await user[0].addProduct(product[0])
         if (data) {
