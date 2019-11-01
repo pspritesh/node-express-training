@@ -18,7 +18,7 @@ require('dotenv').config()
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
-const sequelizeHelper = require('./src/helpers/sequelizeHelper')
+const sequelizeRelations = require('./src/helpers/sequelizeHelper').configRelations
 /**** Custom modules */
 
 const app = express()
@@ -96,7 +96,7 @@ app.use((err, req, res, next) => res.status(err.status || 500).json(err.message 
 /**** eslint-enable no-unused-vars */
 
 // Establishes all relations for Sequelize
-sequelizeHelper.configRelations()
+sequelizeRelations()
 // Sequelize auto-create missing tables using sync()
 sequelize.sync()
   .then(() => {

@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
+const mongooseModel = require('mongoose').model
 
-const { importModel } = require('../helpers/sequelizeHelper')
+const sequelizeModel = require('../helpers/sequelizeHelper').model
 
 exports.custom = async (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(" ")[1]
-    let user = await importModel('User').findAll({ where: { api_token: token } })
+    let user = await sequelizeModel('User').findAll({ where: { api_token: token } })
     if (user.length) {
       next()
     } else {
-      user = await mongoose.model('user').find({ apiToken: token })
+      user = await mongooseModel('user').find({ apiToken: token })
       if (user.length) {
         next()
       } else {
@@ -43,7 +43,7 @@ exports.jwtAuth = (req, res, next) => {
 exports.mongoAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const data = await mongoose.model('user').findById(req.userId)
+      const data = await mongooseModel('user').findById(req.userId)
       if (data) {
         next()
       } else {
@@ -61,7 +61,7 @@ exports.mongoAuthorize = async (req, res, next) => {
 exports.sqlAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const user = await importModel('User').findAll({ where: {id: parseInt(req.userId)} })
+      const user = await sequelizeModel('User').findAll({ where: {id: parseInt(req.userId)} })
       if (user.length) {
         next()
       } else {

@@ -3,7 +3,7 @@ const path = require('path')
 
 const bcrypt = require('bcrypt')
 const mongodb = require('mongodb')
-const mongoose = require('mongoose')
+const { model } = require('mongoose')
 const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
@@ -12,8 +12,8 @@ const mailer = require('../config/mailer')
 exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const userCount = await mongoose.model('user').find().countDocuments()
-    const users = await mongoose.model('user').aggregate([
+    const userCount = await model('user').find().countDocuments()
+    const users = await model('user').aggregate([
       {
         $lookup: {
           from: "products",
@@ -61,7 +61,7 @@ exports.getUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const data = await mongoose.model('user').aggregate([
+    const data = await model('user').aggregate([
       { $match: { _id: new mongodb.ObjectId(req.params.id) } },
       {
         $lookup: {
@@ -104,10 +104,10 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const data = await mongoose.model('user').findOne({ username: req.body.username })
+    const data = await model('user').findOne({ username: req.body.username })
     if (!data) {
       const hashedPassword = await bcrypt.hash(req.body.password, 256)
-      const user = await mongoose.model('user').create({
+      const user = await model('user').create({
         profile: {
           fname: req.body.fname,
           mname: req.body.mname,
@@ -147,10 +147,10 @@ exports.addUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const data = await mongoose.model('user').findOne({ username: req.body.username })
+    const data = await model('user').findOne({ username: req.body.username })
     if (!data || data._id === new mongodb.ObjectId(req.params.id)) {
       const hashedPassword = await bcrypt.hash(req.body.password, 256)
-      const user = await mongoose.model('user').findByIdAndUpdate(req.params.id, {
+      const user = await model('user').findByIdAndUpdate(req.params.id, {
         profile: {
           fname: req.body.fname,
           mname: req.body.mname,
@@ -177,7 +177,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await mongoose.model('user').findByIdAndDelete(req.params.id, {useFindAndModify: false})
+    const user = await model('user').findByIdAndDelete(req.params.id, {useFindAndModify: false})
     if (user) {
       return res.json('User delete successfully!')
     } else {
@@ -192,11 +192,11 @@ exports.deleteUser = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const productCount = await mongoose.model('product').aggregate([
+    const productCount = await model('product').aggregate([
       { $match: { price: { $gte: 10 } } },
       { $group: { _id: "$name", total: { $sum: "$price" } } },
     ])
-    const products = await mongoose.model('product').aggregate([
+    const products = await model('product').aggregate([
       { $match: { price: { $gte: 10 } } },
       { $project: { _id: 1, name: 1, price: 1, about: '$description', image: 1 } },
       { $sort: { price: 1 } },
@@ -219,7 +219,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getUserProducts = async (req, res) => {
   try {
-    const userProducts = await mongoose.model('user').findById(req.params.id).select('products -_id').populate('products')
+    const userProducts = await model('user').findById(req.params.id).select('products -_id').populate('products')
     if (userProducts) {
       return res.json(userProducts)
     } else {
@@ -233,7 +233,7 @@ exports.getUserProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    const data = await mongoose.model('product').create({
+    const data = await model('product').create({
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
@@ -251,7 +251,7 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await mongoose.model('product').findByIdAndUpdate(req.params.id, {
+    const product = await model('product').findByIdAndUpdate(req.params.id, {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
@@ -269,16 +269,16 @@ exports.updateProduct = async (req, res) => {
 
 exports.addNewProduct = async (req, res) => {
   try {
-    const userData = await mongoose.model('user').findById(req.params.id)
+    const userData = await model('user').findById(req.params.id)
     if (userData) {
-      const product = await mongoose.model('product').create({
+      const product = await model('product').create({
         name: req.body.name,
         price: req.body.price,
         description: req.body.description
       })
       if (product) {
         userData.products.push(product)
-        const user = await mongoose.model('user').findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
+        const user = await model('user').findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
         if (user) {
           return res.status(201).json('Product created and assigned to user successfully!')
         } else {
@@ -298,11 +298,11 @@ exports.addNewProduct = async (req, res) => {
 
 exports.addNewProductImage = async (req, res) => {
   try {
-    const product = await mongoose.model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.id)
     if (product) {
       const productImage = req.file
       if (productImage) {
-        const product = await mongoose.model('product').findByIdAndUpdate(req.params.id, {
+        const product = await model('product').findByIdAndUpdate(req.params.id, {
           image: productImage.path
         }, {useFindAndModify: false})
         if (product) {
@@ -324,7 +324,7 @@ exports.addNewProductImage = async (req, res) => {
 
 exports.getProductImage = async (req, res) => {
   try {
-    const product = await mongoose.model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.id)
     if (product) {
       /**** Sending file path in response */
       // return res.status(200).json(product.image)
@@ -355,7 +355,7 @@ exports.getProductImage = async (req, res) => {
 
 exports.generatePDF = async (req, res) => {
   try {
-    const product = await mongoose.model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.id)
     if (product) {
       const pdfDoc = new PDFDocument()
       const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
@@ -377,14 +377,14 @@ exports.generatePDF = async (req, res) => {
 
 exports.assignProduct = async (req, res) => {
   try {
-    const user = await mongoose.model('user').findById(req.params.uid)
+    const user = await model('user').findById(req.params.uid)
     if (user) {
-      const product = await mongoose.model('product').findById(req.params.pid)
+      const product = await model('product').findById(req.params.pid)
       if (product) {
         user.products.push(product)
         /**** Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
-        const newUserData = await mongoose.model('user').findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
+        const newUserData = await model('user').findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
         if (newUserData) {
           return res.status(201).json('Product assigned successfully!')
         } else {
@@ -404,15 +404,15 @@ exports.assignProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await mongoose.model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.id)
     if (product) {
-      const userData = await mongoose.model('user').find()
+      const userData = await model('user').find()
       count = 0
       userData.forEach(user => {
         if (user.products.pull(product)) count++
         user.save()
       })
-      const deleteProduct = await mongoose.model('product').findByIdAndDelete(req.params.id, {useFindAndModify: false})
+      const deleteProduct = await model('product').findByIdAndDelete(req.params.id, {useFindAndModify: false})
       if (deleteProduct) {
         return res.json((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
       } else {
