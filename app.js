@@ -108,18 +108,13 @@ sequelize.sync()
 
 // Connect to MongoDB
 mongoConnect(() => {
-  // app.listen(process.env.HTTP_PORT, () => {
-  //   console.log(`Find the server at: ${process.env.APP_URL}`)
-  // })
   console.log(`Connection has been established successfully with '${process.env.DB_NAME}' mongo database.`)
 })
 
 // Connect to Mongoose ODM
 mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
   .then(() => {
-    // app.listen(process.env.HTTP_PORT, () => {
-    //   console.log(`Find the server at: ${process.env.APP_URL}`)
-    // })
     console.log(`Connection has been established successfully using mongoose ODM with '${process.env.DB_NAME}' database.`)
+    fs.readdirSync(__dirname + '/src/models/Mongoose').forEach(file => require(__dirname + '/src/models/Mongoose/' + file))
   })
   .catch(err => console.error(err))
