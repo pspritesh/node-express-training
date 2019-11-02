@@ -118,3 +118,5 @@ mongoose.connect(process.env.DB_URL+process.env.DB_NAME, { useNewUrlParser: true
     fs.readdirSync(__dirname + '/src/models/Mongoose').forEach(file => require(__dirname + '/src/models/Mongoose/' + file))
   })
   .catch(err => console.error(err))
+
+module.exports = app
