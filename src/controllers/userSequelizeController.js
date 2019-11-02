@@ -45,7 +45,7 @@ exports.getUser = async (req, res) => {
   try {
     const user = await model('User').findAll({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
-      where: { id: parseInt(req.params.id) },
+      where: { id: parseInt(req.params.userId) },
       include: [{
         model: model('Profile'),
         as: 'profile',
@@ -114,8 +114,8 @@ exports.addUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const user = await model('User').findAll({ where: { username: req.body.username } })
-    if (!user.length || user[0].id == parseInt(req.params.id)) {
-      const user = await model('User').findAll({ where: { id: parseInt(req.params.id) } })
+    if (!user.length || user[0].id == parseInt(req.params.userId)) {
+      const user = await model('User').findAll({ where: { id: parseInt(req.params.userId) } })
       if (user && user.length) {
         const hashedPassword = await bcrypt.hash(req.body.password, 256)
         user[0].username = req.body.username
@@ -154,7 +154,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await model('User').findAll({ where: { id: parseInt(req.params.id) } })
+    const user = await model('User').findAll({ where: { id: parseInt(req.params.userId) } })
     if (user[0]) {
       const profile = await user[0].getProfile()
       if (profile) {
@@ -189,7 +189,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProduct = async (req, res) => {
   try {
     const userProducts = await model('User').findAll({
-      where: { id: parseInt(req.params.id) },
+      where: { id: parseInt(req.params.userId) },
       attributes: [],
       include: [{
         model: model('Product'),
@@ -241,7 +241,7 @@ exports.updateProduct = async (req, res) => {
         description: req.body.description
       },
       {
-        where: {id: parseInt(req.params.id)}
+        where: { id: parseInt(req.params.productId) }
       }
     )
     if (product) {
@@ -257,7 +257,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await model('Product').destroy({ where: { id: parseInt(req.params.id) } })
+    const product = await model('Product').destroy({ where: { id: parseInt(req.params.productId) } })
     if (product) {
       return res.json('Product deleted and cascaded successfully!')
     } else {
@@ -271,7 +271,7 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addNewProduct = async (req, res) => {
   try {
-    const user = await model('User').findAll({ where: { id: parseInt(req.params.id) } })
+    const user = await model('User').findAll({ where: { id: parseInt(req.params.userId) } })
     if (user.length) {
       const product = await user[0].createProduct({
         name: req.body.name,
@@ -294,7 +294,7 @@ exports.addNewProduct = async (req, res) => {
 
 exports.addNewProductImage = async (req, res) => {
   try {
-    const product = await model('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await model('Product').findAll({ where: { id: parseInt(req.params.productId) } })
     if (product.length) {
       const productImage = req.file
       if (productImage) {
@@ -315,7 +315,7 @@ exports.addNewProductImage = async (req, res) => {
 
 exports.getProductImage = async (req, res) => {
   try {
-    const product = await model('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await model('Product').findAll({ where: { id: parseInt(req.params.productId) } })
     if (product.length) {
       /**** Sending file path in response */
       // return res.status(200).json(product[0].image)
@@ -346,7 +346,7 @@ exports.getProductImage = async (req, res) => {
 
 exports.generatePDF = async (req, res) => {
   try {
-    const product = await model('Product').findAll({ where: { id: parseInt(req.params.id) } })
+    const product = await model('Product').findAll({ where: { id: parseInt(req.params.productId) } })
     if (product.length) {
       const pdfDoc = new PDFDocument()
       const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
@@ -368,9 +368,9 @@ exports.generatePDF = async (req, res) => {
 
 exports.assignProduct = async (req, res) => {
   try {
-    const user = await model('User').findAll({ where: { id: parseInt(req.params.uid) } })
+    const user = await model('User').findAll({ where: { id: parseInt(req.params.userId) } })
     if (user.length) {
-      const product = await model('Product').findAll({ where: { id: parseInt(req.params.pid) } })
+      const product = await model('Product').findAll({ where: { id: parseInt(req.params.productId) } })
       if (product.length) {
         data = await user[0].addProduct(product[0])
         if (data) {

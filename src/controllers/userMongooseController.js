@@ -62,7 +62,7 @@ exports.getUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const data = await model('user').aggregate([
-      { $match: { _id: new mongodb.ObjectId(req.params.id) } },
+      { $match: { _id: new mongodb.ObjectId(req.params.userId) } },
       {
         $lookup: {
           from: "products",
@@ -148,9 +148,9 @@ exports.addUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const data = await model('user').findOne({ username: req.body.username })
-    if (!data || data._id === new mongodb.ObjectId(req.params.id)) {
+    if (!data || data._id === new mongodb.ObjectId(req.params.userId)) {
       const hashedPassword = await bcrypt.hash(req.body.password, 256)
-      const user = await model('user').findByIdAndUpdate(req.params.id, {
+      const user = await model('user').findByIdAndUpdate(req.params.userId, {
         profile: {
           fname: req.body.fname,
           mname: req.body.mname,
@@ -160,7 +160,7 @@ exports.updateUser = async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
         apiToken: randomstring.generate()
-      }, {useFindAndModify: false})
+      }, { useFindAndModify: false })
       if (user) {
         return res.status(201).json('User updated successfully!')
       } else {
@@ -177,7 +177,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await model('user').findByIdAndDelete(req.params.id, {useFindAndModify: false})
+    const user = await model('user').findByIdAndDelete(req.params.userId, { useFindAndModify: false })
     if (user) {
       return res.json('User delete successfully!')
     } else {
@@ -219,7 +219,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getUserProducts = async (req, res) => {
   try {
-    const userProducts = await model('user').findById(req.params.id).select('products -_id').populate('products')
+    const userProducts = await model('user').findById(req.params.userId).select('products -_id').populate('products')
     if (userProducts) {
       return res.json(userProducts)
     } else {
@@ -251,11 +251,11 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await model('product').findByIdAndUpdate(req.params.id, {
+    const product = await model('product').findByIdAndUpdate(req.params.productId, {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
-    }, {useFindAndModify: false})
+    }, { useFindAndModify: false })
     if (product) {
       return res.status(201).json('Product updated successfully!')
     } else {
@@ -269,7 +269,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.addNewProduct = async (req, res) => {
   try {
-    const userData = await model('user').findById(req.params.id)
+    const userData = await model('user').findById(req.params.userId)
     if (userData) {
       const product = await model('product').create({
         name: req.body.name,
@@ -278,7 +278,7 @@ exports.addNewProduct = async (req, res) => {
       })
       if (product) {
         userData.products.push(product)
-        const user = await model('user').findByIdAndUpdate(req.params.id, userData, {useFindAndModify: false})
+        const user = await model('user').findByIdAndUpdate(req.params.userId, userData, { useFindAndModify: false })
         if (user) {
           return res.status(201).json('Product created and assigned to user successfully!')
         } else {
@@ -298,13 +298,13 @@ exports.addNewProduct = async (req, res) => {
 
 exports.addNewProductImage = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.productId)
     if (product) {
       const productImage = req.file
       if (productImage) {
-        const product = await model('product').findByIdAndUpdate(req.params.id, {
+        const product = await model('product').findByIdAndUpdate(req.params.productId, {
           image: productImage.path
-        }, {useFindAndModify: false})
+        }, { useFindAndModify: false })
         if (product) {
           return res.status(201).json('Image assigned to product successfully!')
         } else {
@@ -324,7 +324,7 @@ exports.addNewProductImage = async (req, res) => {
 
 exports.getProductImage = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.productId)
     if (product) {
       /**** Sending file path in response */
       // return res.status(200).json(product.image)
@@ -355,7 +355,7 @@ exports.getProductImage = async (req, res) => {
 
 exports.generatePDF = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.productId)
     if (product) {
       const pdfDoc = new PDFDocument()
       const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
@@ -377,14 +377,14 @@ exports.generatePDF = async (req, res) => {
 
 exports.assignProduct = async (req, res) => {
   try {
-    const user = await model('user').findById(req.params.uid)
+    const user = await model('user').findById(req.params.userId)
     if (user) {
-      const product = await model('product').findById(req.params.pid)
+      const product = await model('product').findById(req.params.productId)
       if (product) {
         user.products.push(product)
         /**** Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
-        const newUserData = await model('user').findByIdAndUpdate(req.params.uid, user, {useFindAndModify: false})
+        const newUserData = await model('user').findByIdAndUpdate(req.params.userId, user, { useFindAndModify: false })
         if (newUserData) {
           return res.status(201).json('Product assigned successfully!')
         } else {
@@ -404,7 +404,7 @@ exports.assignProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.id)
+    const product = await model('product').findById(req.params.productId)
     if (product) {
       const userData = await model('user').find()
       count = 0
@@ -412,7 +412,7 @@ exports.deleteProduct = async (req, res) => {
         if (user.products.pull(product)) count++
         user.save()
       })
-      const deleteProduct = await model('product').findByIdAndDelete(req.params.id, {useFindAndModify: false})
+      const deleteProduct = await model('product').findByIdAndDelete(req.params.productId, { useFindAndModify: false })
       if (deleteProduct) {
         return res.json((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
       } else {
