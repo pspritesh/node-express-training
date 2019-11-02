@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const { Schema, model } = require('mongoose')
 
 const userSchema = new Schema({
   username: {
@@ -38,7 +37,7 @@ const userSchema = new Schema({
   },
   products: [
     {
-      type: mongoose.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Product'
     }
   ]
@@ -47,4 +46,4 @@ const userSchema = new Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = model('user', userSchema)
