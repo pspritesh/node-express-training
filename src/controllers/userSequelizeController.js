@@ -33,7 +33,7 @@ exports.getUsers = async (req, res) => {
     })
     return res.json({
       data: users,
-      totalPages: Math.ceil(allUsers.count/itemsPerPage)
+      totalPages: Math.ceil(allUsers.count / itemsPerPage)
     })
   } catch (error) {
     console.error(error)
@@ -123,7 +123,7 @@ exports.updateUser = async (req, res) => {
         user[0].password = hashedPassword
         user[0].save()
         const profile = await user[0].getProfile()
-        if (profile && profile.length) {
+        if (profile) {
           profile.fname = req.body.fname
           profile.mname = req.body.mname
           profile.lname = req.body.lname
@@ -178,7 +178,7 @@ exports.getAllProducts = async (req, res) => {
     const products = await model('Product').findAll({ offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage, limit: itemsPerPage })
     return res.json({
       data: products,
-      totalPages: Math.ceil(allProducts.count/itemsPerPage)
+      totalPages: Math.ceil(allProducts.count / itemsPerPage)
     })
   } catch (error) {
     console.error(error)

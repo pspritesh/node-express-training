@@ -48,7 +48,7 @@ exports.getUsers = async (req, res) => {
     if (users.length) {
       return res.json({
         data: users,
-        totalPages: Math.ceil(userCount/itemsPerPage)
+        totalPages: Math.ceil(userCount / itemsPerPage)
       })
     } else {
       return res.status(404).json('No users found!')
@@ -206,7 +206,7 @@ exports.getAllProducts = async (req, res) => {
     if (products.length) {
       return res.json({
         data: products,
-        totalPages: Math.ceil(productCount.length/itemsPerPage)
+        totalPages: Math.ceil(productCount.length / itemsPerPage)
       })
     } else {
       return res.status(404).json('No products found!')
