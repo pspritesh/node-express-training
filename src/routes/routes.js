@@ -50,7 +50,7 @@ const webRoutes = require('./webRoutes')
 /**
  * @swagger
  * /login:
- *  post:
+ *  get:
  *    security:
  *     - bearerAuth: []
  *    tags:
@@ -82,7 +82,7 @@ const webRoutes = require('./webRoutes')
  *        description: Internal server error.
  *        $ref: '#/definitions/Error'
  * */
-router.post('/api/login', loginController.jwtLogin)
+router.get('/api/login', loginController.jwtLogin)
 router.use('/api', auth.jwtAuth, apiRoutes)
 router.use('/', webRoutes)
 
