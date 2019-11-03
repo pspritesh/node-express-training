@@ -50,7 +50,6 @@ exports.mongoAuthorize = async (req, res, next) => {
         return res.status(401).json('You are not authorised to access this page!')
       }
     } catch (error) {
-      console.error(error)
       return res.status(401).json('You are not authorised to access this page!')
     }
   } else {
@@ -68,7 +67,6 @@ exports.sqlAuthorize = async (req, res, next) => {
         return res.status(401).json('You are not authorised to access this page!')
       }
     } catch (error) {
-      console.error(error)
       return res.status(401).json('You are not authorised to access this page!')
     }
   } else {

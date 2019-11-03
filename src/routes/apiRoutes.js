@@ -2,16 +2,11 @@ const express = require('express')
 const router = new express.Router()
 
 const auth = require('../middlewares/auth')
-const productRoutes = require('./api/productRoutes')
-const userMongoDBRoutes = require('./api/userMongoDBRoutes')
-const userMongooseRoutes = require('./api/userMongooseRoutes')
-const userMySQLRoutes = require('./api/userMySQLRoutes')
-const userSequelizeRoutes = require('./api/userSequelizeRoutes')
 
-router.use('/products', productRoutes)
-router.use('/usermysql', auth.sqlAuthorize, userMySQLRoutes)
-router.use('/usersequelize', auth.sqlAuthorize, userSequelizeRoutes)
-router.use('/usermongodb', auth.mongoAuthorize, userMongoDBRoutes)
-router.use('/usermongoose', auth.mongoAuthorize, userMongooseRoutes)
+router.use('/products', require('./api/productRoutes'))
+router.use('/usermysql', auth.sqlAuthorize, require('./api/userMySQLRoutes'))
+router.use('/usersequelize', auth.sqlAuthorize, require('./api/userSequelizeRoutes'))
+router.use('/usermongodb', auth.mongoAuthorize, require('./api/userMongoDBRoutes'))
+router.use('/usermongoose', auth.mongoAuthorize, require('./api/userMongooseRoutes'))
 
 module.exports = router
