@@ -54,7 +54,7 @@ app.set("view engine", "pug")
 
 /**** Setting up the CORS for app */
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL)
+  res.header("Access-Control-Allow-Origin", process.env.CLIENT_URL || '*')
   res.header("Access-Control-Allow-Headers", "Origin, Authorization, X-Requested-With, Content-Type, Accept")
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD")
   if ('OPTIONS' === req.method) {
