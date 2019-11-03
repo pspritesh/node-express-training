@@ -11,14 +11,22 @@ const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const multer = require('multer')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
 require('dotenv').config()
 /**** 3rd party modules */
 
 /**** Custom modules */
+const config = require('./src/config/config')
 const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const sequelizeRelations = require('./src/helpers/sequelizeHelper').configRelations
+const swaggerDefinition = config.swaggerDefinition
+const options = {
+  swaggerDefinition,
+  'apis': ['./src/routes/*.js'],
+}
 /**** Custom modules */
 
 const app = express()
@@ -86,6 +94,9 @@ app.use(express.static(path.join(__dirname, 'src/public')))
 
 app.enable('etag') // use strong etags
 app.set('etag', 'strong')
+
+// Swagger configuration.
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(options), config.swaggerOptions))
 
 // Handles routes in the app
 app.use(routes)

@@ -7,8 +7,81 @@ const loginController = require('../controllers/loginController')
 const apiRoutes = require('./apiRoutes')
 const webRoutes = require('./webRoutes')
 
-// router.post('/login', loginController.postLogin)
-// router.use('/api', auth.custom, apiRoutes)
+// Global swagger definition for Success response format.
+/**
+ * @swagger
+ *  definitions:
+ *   Success:
+ *    type: object
+ *    properties:
+ *     success:
+ *      type: boolean
+ *      default: true
+ *     error:
+ *      type: string
+ *      default: 'null'
+ *     data:
+ *      type: string
+ *      description: Either object or Array.
+ */
+
+// Global swagger definition for Error response format.
+/**
+ * @swagger
+ * definitions:
+ *  Error:
+ *   type: object
+ *   properties:
+ *    success:
+ *     type: boolean
+ *     default: false
+ *    error:
+ *     type: object
+ *     properties:
+ *      code:
+ *       type: string
+ *      message:
+ *       type: string
+ *    data:
+ *      type: string
+ *      default: 'null'
+ */
+
+/**
+ * @swagger
+ * /login:
+ *  post:
+ *    security:
+ *     - bearerAuth: []
+ *    tags:
+ *      - Users
+ *    name: Users
+ *    summary: Verify user creds and give bearer token in response.
+ *    consumes:
+ *      - application/json
+ *    produces:
+ *      - application/json
+ *    parameters:
+ *      - name: Body Data
+ *        in: body
+ *        schema:
+ *         type: object
+ *         properties:
+ *          username:
+ *           type: string
+ *          password:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Authorisation Token would be response.
+ *        $ref: '#/definitions/Success'
+ *      404:
+ *        description: User not found.
+ *        $ref: '#/definitions/Error'
+ *      500:
+ *        description: Internal server error.
+ *        $ref: '#/definitions/Error'
+ * */
 router.post('/api/login', loginController.jwtLogin)
 router.use('/api', auth.jwtAuth, apiRoutes)
 router.use('/', webRoutes)

@@ -39,6 +39,8 @@
     "randomstring": "^1.1.5",
     "sequelize": "^5.21.2",
     "sequelize-cli": "^5.5.0",
+    "swagger-jsdoc": "^3.4.0",
+    "swagger-ui-express": "^4.1.2",
     "utf8": "^3.0.0"
   },
   "devDependencies": {
