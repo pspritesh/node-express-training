@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
-const mongooseModel = require('mongoose').model
+const { model: mongooseModel } = require('mongoose')
 
-const sequelizeModel = require('../helpers/sequelizeHelper').model
+const { model: sequelizeModel } = require('../helpers/sequelizeHelper')
 
 exports.custom = async (req, res, next) => {
   if (req.headers.authorization) {

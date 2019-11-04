@@ -18,15 +18,11 @@ require('dotenv').config()
 
 /**** Custom modules */
 const config = require('./src/config/config')
-const mongoConnect = require('./src/config/dbconfig/MongoDB').mongoConnect
+const { mongoConnect } = require('./src/config/dbconfig/MongoDB')
 const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
-const sequelizeRelations = require('./src/helpers/sequelizeHelper').configRelations
+const { configRelations: sequelizeRelations } = require('./src/helpers/sequelizeHelper')
 const swaggerDefinition = config.swaggerDefinition
-const options = {
-  swaggerDefinition,
-  'apis': ['./src/routes/*.js'],
-}
 /**** Custom modules */
 
 const app = express()
@@ -96,7 +92,13 @@ app.enable('etag') // use strong etags
 app.set('etag', 'strong')
 
 // Swagger configuration.
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(options), config.swaggerOptions))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc({
+  swaggerDefinition,
+  'apis': [
+    './src/routes/*.js',
+    './src/routes/api/*.js'
+  ],
+}), config.swaggerOptions))
 
 // Handles routes in the app
 app.use(routes)
