@@ -19,7 +19,6 @@ require('dotenv').config()
 /**** Custom modules */
 const config = require('./src/config/config')
 const { mongoConnect } = require('./src/config/dbconfig/MongoDB')
-const routes = require('./src/routes/routes')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const { configRelations: sequelizeRelations } = require('./src/helpers/sequelizeHelper')
 const swaggerDefinition = config.swaggerDefinition
@@ -101,7 +100,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc({
 }), config.swaggerOptions))
 
 // Handles routes in the app
-app.use(routes)
+app.use(require('./src/routes/routes'))
 
 /**** eslint-disable no-unused-vars */
 // error handler
