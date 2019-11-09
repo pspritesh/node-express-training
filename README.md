@@ -1,5 +1,5 @@
-# node-express-training
-=======================
+node-express-training
+=====================
 
 This repository contains all the information about **NodeJS**, like what it is, how it works as well as what is **ExpressJS**,  and its connectivity with databases like **MySQL** and **MongoDB** as well as ORM *(Sequelize)* and ODM *(Mongoose)*.
 Also it contains Mail sending functionality, file uploads and downloads.
