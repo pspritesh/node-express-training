@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 
 const sequelize = require('../../config/dbconfig/SequelizeDB')
 
-const UserRoles = sequelize.define('userProducts', {
+const userProducts = sequelize.define('userProducts', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -11,4 +11,4 @@ const UserRoles = sequelize.define('userProducts', {
   }
 })
 
-module.exports = UserRoles
+module.exports = userProducts
