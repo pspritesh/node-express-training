@@ -28,6 +28,7 @@ If you need theoratical information, you can read [this](https://docs.google.com
     * Features of Object Document Mapping using **mongoose** module
     * Connecting multiple documents by embedding or referencing
     * Aggregation framework
+* Email functionality
 * API Documentation
 
 ## Setup
