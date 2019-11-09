@@ -1,6 +1,6 @@
 node-express-training
 =====================
-> This repository contains descriptive Node project which covers basics of NodeJS as well as advanced *(intermediate level)* topics.
+> This repository contains descriptive Node Express project which covers basics of NodeJS as well as advanced *(intermediate level)* topics and ExpressJS as well.
 
 If you need theoratical information, you can read [this](https://docs.google.com/document/d/17c6pEPkAsdw5HU_pKuPyzUgdpQvWHl-eHfePB349oUk/edit) document.
 
