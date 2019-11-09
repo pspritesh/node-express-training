@@ -33,8 +33,9 @@ If you need theoratical information, you can read [this](https://docs.google.com
     ```sh
     git clone https://github.com/pspritesh/node-express-training.git
     ```
-2. Install all modules
+2. Go to root directory and install all modules
    ```sh
+   cd node-express-training
    npm i
    ```
 3. Copy `.env.example` file to create `.env` and insert proper values
