@@ -1,7 +1,28 @@
 # node-express-training
-This repository contains practical information about **NodeJS** as well as **ExpressJS** and its connectivity with databases like **MySQL** and **MongoDB** as well as ORM *(Sequelize)* and ODM *(Mongoose)*.
+This repository contains all the information about **NodeJS**, like what it is, how it works as well as what is **ExpressJS**,  and its connectivity with databases like **MySQL** and **MongoDB** as well as ORM *(Sequelize)* and ODM *(Mongoose)*.
 Also it contains Mail sending functionality, file uploads and downloads.
 
 If you need theoratical information, you can read [this](https://docs.google.com/document/d/17c6pEPkAsdw5HU_pKuPyzUgdpQvWHl-eHfePB349oUk/edit) document.
 
 ## Contents
+* JS, ES6 *(Callbacks, Promises, Async Await)*
+* Introducton to NodeJS *(Architecture, Middlewares)* and NPM
+* ExpressJS framework
+* MVC pattern
+* Authentication and Authorisation
+* File upload and download
+* Express validations
+* Rest APIs
+* CRUD app using FileDB
+* Relational Database
+    * Core MySQL connectivity using **mysql2** module
+    * Features of Object Relational Mapping using **sequelize** module
+    * Additional features like DB migrations and seeding
+    * Database relationships *(One-To-One, One-To-Many, Many-To-Many)*
+    * Advanced features like Joins, Clauses
+* Non-relational Database
+    * Core MongoDB connectivity using **mongodb** module
+    * Features of Object Document Mapping using **mongoose** module
+    * Connecting multiple documents by embedding or referencing
+    * Aggregation framework
+* API Documentation
