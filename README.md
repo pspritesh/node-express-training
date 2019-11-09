@@ -1,9 +1,6 @@
 node-express-training
 =====================
-- - - - - - - - - - -
-
-> This repository contains all the information about **NodeJS**, like what it is, how it works as well as what is **ExpressJS**,  and its connectivity with databases like **MySQL** and **MongoDB** as well as ORM *(Sequelize)* and ODM *(Mongoose)*.
-> Also it contains Mail sending functionality, file uploads and downloads.
+> This repository contains basic to advance level descriptive Node project.
 
 If you need theoratical information, you can read [this](https://docs.google.com/document/d/17c6pEPkAsdw5HU_pKuPyzUgdpQvWHl-eHfePB349oUk/edit) document.
 
@@ -47,4 +44,5 @@ If you need theoratical information, you can read [this](https://docs.google.com
    npx sequelize-cli db:create
    cd ..
    ```
+   > *Note: There is no need to create Mongo database as it automatically gets created when the app is started.*
 5. Start the server using `npm start` or `yarn start`
