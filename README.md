@@ -1,4 +1,5 @@
 # node-express-training
+=======================
 This repository contains all the information about **NodeJS**, like what it is, how it works as well as what is **ExpressJS**,  and its connectivity with databases like **MySQL** and **MongoDB** as well as ORM *(Sequelize)* and ODM *(Mongoose)*.
 Also it contains Mail sending functionality, file uploads and downloads.
 
@@ -26,3 +27,21 @@ If you need theoratical information, you can read [this](https://docs.google.com
     * Connecting multiple documents by embedding or referencing
     * Aggregation framework
 * API Documentation
+
+## Setup
+1. Clone the repository
+    ```sh
+    git clone https://github.com/pspritesh/node-express-training.git
+    ```
+2. Install all modules
+   ```sh
+   npm i
+   ```
+3. Copy `.env.example` file to create `.env` and insert proper values
+4. Create database using `sequelize-cli` as follows : 
+   ```sh
+   cd src/
+   npx sequelize-cli db:create
+   cd ..
+   ```
+5. Start the server using `npm start` or `yarn start`
