@@ -82,6 +82,7 @@ const loginController = require('../controllers/loginController')
  * */
 router.get('/api/login', loginController.jwtLogin)
 router.use('/api', auth.jwtAuth, require('./apiRoutes'))
+// router.use('/api', auth.checkJwt, auth.checkScopes, require('./apiRoutes'))
 router.use('/', require('./webRoutes'))
 
 // Handles 404 requests

@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken')
+const jwt2 = require('express-jwt')
+const jwtAuthz = require('express-jwt-authz')
+const jwksRsa = require('jwks-rsa')
 const { model: mongooseModel } = require('mongoose')
 
 const { model: sequelizeModel } = require('../helpers/sequelizeHelper')
@@ -73,3 +76,19 @@ exports.sqlAuthorize = async (req, res, next) => {
     return res.status(401).json('You are not authorised to access this page!')
   }
 }
+
+exports.checkJwt = jwt2({
+  secret: jwksRsa.expressJwtSecret({
+    cache: process.env.CAN_CACHE,
+    rateLimit: process.env.CAN_RATE_LIMIT,
+    jwksRequestsPerMinute: process.env.JWKS_REQUESTS_PER_MINUTE,
+    jwksUri: process.env.JWKS_URI
+  }),
+
+  // Validate the audience and the issuer.
+  audience: process.env.AUDIENCE,
+  issuer: process.env.ISSUER,
+  algorithms: ['RS256']
+})
+
+exports.checkScopes = jwtAuthz([ 'read:messages' ])
