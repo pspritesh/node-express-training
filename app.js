@@ -16,13 +16,13 @@ const swaggerUi = require('swagger-ui-express')
 require('dotenv').config()
 /**** 3rd party modules */
 
-/**** Custom modules */
+/**** Local modules */
 const config = require('./src/config/config')
 const { mongoConnect } = require('./src/config/dbconfig/MongoDB')
 const sequelize = require('./src/config/dbconfig/SequelizeDB')
 const { configRelations: sequelizeRelations } = require('./src/helpers/sequelizeHelper')
 const swaggerDefinition = config.swaggerDefinition
-/**** Custom modules */
+/**** Local modules */
 
 const app = express()
 
