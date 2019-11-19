@@ -1,5 +1,8 @@
 const fs = require('fs')
+
 const AWS = require('aws-sdk')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
 
 const S3 = new AWS.S3({
   accessKeyId: process.env.ACCESS_KEY,
