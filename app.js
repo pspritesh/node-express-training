@@ -82,7 +82,7 @@ const fileFilter = (req, file, cb) => {
 }
 
 // Form encryption multipart/form-data
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'))
+app.use(multer({ fileFilter: fileFilter }).single('image'))
 
 // serve static files
 app.use(express.static(path.join(__dirname, 'src/public')))
