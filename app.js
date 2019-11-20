@@ -4,6 +4,7 @@ const path = require('path')
 /**** Core modules */
 
 /**** 3rd party modules */
+const AWS = require('aws-sdk')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const express = require('express')
@@ -11,6 +12,7 @@ const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const multer = require('multer')
+const multerS3 = require('multer-s3')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 require('dotenv').config()
@@ -25,6 +27,12 @@ const swaggerDefinition = config.swaggerDefinition
 /**** Local modules */
 
 const app = express()
+
+const S3 = new AWS.S3({
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION
+})
 
 // Create log file for morgan which stores all the log data
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'src/logs', 'access.log'), { flags: 'a' })
@@ -66,10 +74,18 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // POST routes/APIs data in application/json format
 app.use(bodyParser.json())
 
-// Multer callback for storing files in proper naming convension
+// Multer callback for storing files in folder with proper naming convension
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'src/public/files/images'),
   filename: (req, file, cb) => cb(null, new Date().toISOString() + '-' + file.originalname)
+})
+
+// Multer callback for storing files in S3 bucket with proper naming convension
+const fileStorageS3 = multerS3({
+  s3: S3,
+  bucket: process.env.ASSET_BUCKET,
+  metadata: (req, file, cb) => cb(null, { fieldName: file.fieldname }),
+  key: (req, file, cb) => cb(null, Date.now().toString())
 })
 
 // Multer callback for filtering file types
@@ -82,7 +98,7 @@ const fileFilter = (req, file, cb) => {
 }
 
 // Form encryption multipart/form-data
-app.use(multer({ fileFilter: fileFilter }).single('image'))
+app.use(multer({ fileStorage: fileStorageS3, fileFilter: fileFilter }).single('image'))
 
 // serve static files
 app.use(express.static(path.join(__dirname, 'src/public')))
