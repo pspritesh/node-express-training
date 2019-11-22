@@ -18,6 +18,7 @@ config.swaggerDefinition = {
     }
   }
 }
+
 config.swaggerOptions = {
   'customSiteTitle': 'Node Express Training',
   'customCss': '.swagger-ui .topbar { display: none }',
