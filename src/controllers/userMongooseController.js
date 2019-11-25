@@ -8,7 +8,7 @@ const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
 const mailer = require('../config/mailer')
-const { uploadFileToS3 } = require('../helpers/awsHelper')
+const { imgUploadToS3 } = require('../helpers/awsHelper')
 
 exports.getUsers = async (req, res) => {
   try {
@@ -301,17 +301,41 @@ exports.addNewProductImage = async (req, res) => {
   try {
     const product = await model('product').findById(req.params.productId)
     if (product) {
-      const productImage = req.file
+      // const productImage = req.file
+
+
+      const productImage = await imgUploadToS3(req, res, error => {
+        if (error) {
+          console.log('errors', error)
+          return res.json({ error: error })
+        } else {
+          // If File not found
+          if (req.file === undefined) {
+            console.log('Error: No File Selected!')
+            return res.json('Error: No File Selected!')
+          } else {
+            // If Success
+            const imageName = req.file.key;
+            const imageLocation = req.file.location;
+            // Save the file name into database into profile model
+            return res.json({
+              image: imageName,
+              location: imageLocation
+            });
+          }
+        }
+      })
+      console.log('productImage', productImage)
+
+
       if (productImage) {
-        const uploadFileStatus = await uploadFileToS3(productImage)
-        console.log(productImage)
         const product = await model('product').findByIdAndUpdate(req.params.productId, {
           image: productImage.path
         }, { useFindAndModify: false })
         if (product) {
           return res.status(201).json('Image assigned to product successfully!')
         } else {
-          return res.status(404).json('No image found to upload!')
+          return res.status(404).json('Nothing to upload!')
         }
       } else {
         return res.status(404).json('No image found to upload!')
@@ -321,7 +345,7 @@ exports.addNewProductImage = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
