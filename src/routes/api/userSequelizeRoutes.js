@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 
 const userSequelizeController = require('../../controllers/userSequelizeController')
+const { imgUploadToS3 } = require('../../helpers/awsHelper')
 
 router.route('/products')
   .get(userSequelizeController.getAllProducts)
@@ -18,7 +19,7 @@ router.route('/products/:userId/mtm')
 
 router.route('/products/:productId/image')
   .get(userSequelizeController.getProductImage)
-  .post(userSequelizeController.addNewProductImage)
+  .post(imgUploadToS3.single('image'), userSequelizeController.addNewProductImage)
 router.post('/products/:userId/:productId', userSequelizeController.assignProduct)
 
 

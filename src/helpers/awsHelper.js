@@ -10,26 +10,6 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION
 });
 
-/**
- * Check File Type
- * @param file
- * @param cb
- * @return {*}
- */
-const checkFileType = (file, cb) => {
-  // Allowed ext
-  const filetypes = /jpeg|jpg|png|gif/
-  // Check ext
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
-  // Check mime
-  const mimetype = filetypes.test(file.mimetype)
-  if (mimetype && extname) {
-    return cb(null, true)
-  } else {
-    cb('Error: Images Only!')
-  }
-}
-
 exports.imgUploadToS3 = multer({
   'storage': multerS3({
     's3': s3,
@@ -41,13 +21,16 @@ exports.imgUploadToS3 = multer({
         'fieldName': file.fieldname
       })
     },
-    'key': function(req, file, cb) {
-      cb(null, Date.now().toString() + '-' + file.originalname );
-    }
+    'key': (req, file, cb) => cb(null, Date.now().toString() + '-' + file.originalname)
   }),
   'fileFilter': (req, file, cb) => {
+    console.log('file', file)
     if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
-      cb(null, true)
+      if (true) {
+        cb(null, true)
+      } else {
+        cb(null, false)
+      }
     } else {
       cb(null, false)
     }
