@@ -37,14 +37,19 @@ exports.imgUploadToS3 = multer({
     'cacheControl': 'max-age=31536000',
     'bucket': process.env.ASSET_BUCKET,
     'metadata': (req, file, cb) => {
-      console.log('file.fieldname', file.fieldname)
-      console.log('file.originalname', file.originalname)
       cb(null, {
         'fieldName': file.fieldname
       })
     },
     'key': function(req, file, cb) {
-      cb(null, Date.now().toString() + file.originalname );
+      cb(null, Date.now().toString() + '-' + file.originalname );
     }
-  })
+  }),
+  'fileFilter': (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
+      cb(null, true)
+    } else {
+      cb(null, false)
+    }
+  }
 })

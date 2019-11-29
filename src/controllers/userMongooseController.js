@@ -301,14 +301,9 @@ exports.addNewProductImage = async (req, res) => {
   try {
     const product = await model('product').findById(req.params.productId)
     if (product) {
-      const productImage = req.file
-      console.log('productImage', productImage)
-      console.log('req', req)
-
-
-      if (productImage) {
+      if (req.file) {
         const product = await model('product').findByIdAndUpdate(req.params.productId, {
-          image: productImage.path
+          image: req.file.location
         }, { useFindAndModify: false })
         if (product) {
           return res.status(201).json('Image assigned to product successfully!')
