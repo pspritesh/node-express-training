@@ -4,14 +4,13 @@ const path = require('path')
 /**** Core modules */
 
 /**** 3rd party modules */
-// const AWS = require('aws-sdk')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const express = require('express')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
-// const multer = require('multer')
+const multer = require('multer')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 require('dotenv').config()
@@ -26,12 +25,6 @@ const swaggerDefinition = config.swaggerDefinition
 /**** Local modules */
 
 const app = express()
-
-// const S3 = new AWS.S3({
-//   accessKeyId: process.env.ACCESS_KEY,
-//   secretAccessKey: process.env.SECRET_ACCESS_KEY,
-//   region: process.env.S3_REGION
-// })
 
 // Create log file for morgan which stores all the log data
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'src/logs', 'access.log'), { flags: 'a' })
@@ -74,22 +67,22 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // Multer callback for storing files in folder with proper naming convension
-// const fileStorage = multer.diskStorage({
-//   destination: (req, file, cb) => cb(null, 'src/public/files/images'),
-//   filename: (req, file, cb) => cb(null, new Date().toISOString() + '-' + file.originalname)
-// })
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'src/public/files/images'),
+  filename: (req, file, cb) => cb(null, new Date().toISOString() + '-' + file.originalname)
+})
 
 // Multer callback for filtering file types
-// const fileFilter = (req, file, cb) => {
-//   if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
-//     cb(null, true)
-//   } else {
-//     cb(null, false)
-//   }
-// }
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
+    cb(null, true)
+  } else {
+    cb(null, false)
+  }
+}
 
 // Form encryption multipart/form-data
-// app.use(multer({ fileStorage: fileStorage, fileFilter: fileFilter }).single('image'))
+app.use(multer({ fileStorage: fileStorage, fileFilter: fileFilter }).single('image'))
 
 // serve static files
 app.use(express.static(path.join(__dirname, 'src/public')))
