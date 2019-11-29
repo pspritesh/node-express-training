@@ -301,31 +301,9 @@ exports.addNewProductImage = async (req, res) => {
   try {
     const product = await model('product').findById(req.params.productId)
     if (product) {
-      // const productImage = req.file
-
-
-      const productImage = await imgUploadToS3(req, res, error => {
-        if (error) {
-          console.log('errors', error)
-          return res.json({ error: error })
-        } else {
-          // If File not found
-          if (req.file === undefined) {
-            console.log('Error: No File Selected!')
-            return res.json('Error: No File Selected!')
-          } else {
-            // If Success
-            const imageName = req.file.key;
-            const imageLocation = req.file.location;
-            // Save the file name into database into profile model
-            return res.json({
-              image: imageName,
-              location: imageLocation
-            });
-          }
-        }
-      })
+      const productImage = req.file
       console.log('productImage', productImage)
+      console.log('req', req)
 
 
       if (productImage) {

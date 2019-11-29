@@ -4,7 +4,7 @@ const AWS = require('aws-sdk')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 
-const S3 = new AWS.S3({
+const s3 = new AWS.S3({
   accessKeyId: process.env.ACCESS_KEY,
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
   region: process.env.S3_REGION
@@ -31,12 +31,20 @@ const checkFileType = (file, cb) => {
 }
 
 exports.imgUploadToS3 = multer({
-  storage: multerS3({
-    s3: S3,
-    bucket: process.env.ASSET_BUCKET,
-    acl: 'public-read',
-    key: (req, file, cb) => cb(null, path.basename(file.originalname, path.extname(file.originalname)) + '-' + Date.now() + path.extname(file.originalname))
-  }),
-  limits: { fileSize: 2000000 }, // In bytes: 2000000 bytes = 2 MB
-  fileFilter: (req, file, cb) => checkFileType(file, cb)
-}).single('image')
+  'storage': multerS3({
+    's3': s3,
+    'acl': 'public-read',
+    'cacheControl': 'max-age=31536000',
+    'bucket': process.env.ASSET_BUCKET,
+    'metadata': (req, file, cb) => {
+      console.log('file.fieldname', file.fieldname)
+      console.log('file.originalname', file.originalname)
+      cb(null, {
+        'fieldName': file.fieldname
+      })
+    },
+    'key': function(req, file, cb) {
+      cb(null, Date.now().toString() + file.originalname );
+    }
+  })
+})
