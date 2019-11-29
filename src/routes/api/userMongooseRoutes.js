@@ -2,7 +2,6 @@ const express = require('express')
 const router = new express.Router()
 
 const userMongooseController = require('../../controllers/userMongooseController')
-const { imgUploadToS3 } = require('../../helpers/awsHelper')
 
 router.route('/products')
   .get(userMongooseController.getAllProducts)
@@ -19,7 +18,7 @@ router.route('/products/:userId/mtm')
 
 router.route('/products/:productId/image')
   .get(userMongooseController.getProductImage)
-  .post(imgUploadToS3.single('image'), userMongooseController.addNewProductImage)
+  .post(userMongooseController.addNewProductImage)
 router.post('/products/:userId/:productId', userMongooseController.assignProduct)
 
 

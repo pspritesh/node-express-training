@@ -296,9 +296,8 @@ exports.addNewProductImage = async (req, res) => {
   try {
     const product = await model('Product').findAll({ where: { id: parseInt(req.params.productId) } })
     if (product.length) {
-      const productImage = req.file
-      if (productImage) {
-        product[0].image = productImage.path
+      if (req.file) {
+        product[0].image = req.file.path
         product[0].save()
         return res.status(201).json('Image assigned to product successfully!')
       } else {

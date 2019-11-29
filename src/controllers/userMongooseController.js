@@ -8,7 +8,6 @@ const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
 const mailer = require('../config/mailer')
-const { imgUploadToS3 } = require('../helpers/awsHelper')
 
 exports.getUsers = async (req, res) => {
   try {
@@ -303,7 +302,7 @@ exports.addNewProductImage = async (req, res) => {
     if (product) {
       if (req.file) {
         const product = await model('product').findByIdAndUpdate(req.params.productId, {
-          image: req.file.location
+          image: req.file.path
         }, { useFindAndModify: false })
         if (product) {
           return res.status(201).json('Image assigned to product successfully!')
