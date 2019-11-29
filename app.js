@@ -11,7 +11,6 @@ const express = require('express')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
-// const multer = require('multer')
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 require('dotenv').config()
@@ -72,24 +71,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // POST routes/APIs data in application/json format
 app.use(bodyParser.json())
-
-// Multer callback for storing files in folder with proper naming convension
-// const fileStorage = multer.diskStorage({
-//   destination: (req, file, cb) => cb(null, 'src/public/files/images'),
-//   filename: (req, file, cb) => cb(null, new Date().toISOString() + '-' + file.originalname)
-// })
-
-// Multer callback for filtering file types
-// const fileFilter = (req, file, cb) => {
-//   if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
-//     cb(null, true)
-//   } else {
-//     cb(null, false)
-//   }
-// }
-
-// Form encryption multipart/form-data
-// app.use(multer({ fileStorage: fileStorage, fileFilter: fileFilter }).single('image'))
 
 // serve static files
 app.use(express.static(path.join(__dirname, 'src/public')))
