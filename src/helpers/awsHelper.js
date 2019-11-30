@@ -21,10 +21,22 @@ exports.imgUploadToS3 = multer({
         'fieldName': file.fieldname
       })
     },
-    'key': (req, file, cb) => cb(null, Date.now().toString() + '-' + file.originalname)
+    'key': (req, file, cb) => {
+      let path = ''
+      if (req.originalUrl.includes('mongo')) {
+        path += req.originalUrl.includes('mongoose') ? 'mongoose/' : 'mongodb/'
+      } else if (req.originalUrl.includes('sequelize')) {
+        path += 'sequelize/'
+      } else if (req.originalUrl.includes('mysql')) {
+        path += 'mysql/'
+      }
+      if (req.originalUrl.includes('product')) {
+        path += 'productImages/'
+      }
+      cb(null, path + Date.now().toString() + '-' + file.originalname)
+    }
   }),
   'fileFilter': (req, file, cb) => {
-    console.log('file', file)
     if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
       if (true) {
         cb(null, true)
