@@ -37,12 +37,12 @@ exports.imgUploadToS3 = multer({
     }
   }),
   'fileFilter': (req, file, cb) => {
-    if (file.mimetype === 'image/png' || file.mimetype == 'image/jpg' || file.mimetype === 'image/jpeg') {
-      if (true) {
-        cb(null, true)
-      } else {
-        cb(null, false)
-      }
+    let mimetypes = []
+    if (req.originalUrl.includes('image') || req.originalUrl.includes('logo')) {
+      mimetypes = ['image/png', 'image/jpg', 'image/jpeg']
+    }
+    if (mimetypes.includes(file.mimetype)) {
+      cb(null, true)
     } else {
       cb(null, false)
     }
