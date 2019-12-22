@@ -171,8 +171,8 @@ exports.getAllProducts = async (req, res) => {
   try {
     const itemsPerPage = 4
     const products = await model('Product').paginate({
-      page: req.query.page ? req.query.page : 1,     // Default 1
-      paginate: itemsPerPage                         // Default 25
+      page: req.query.page ? req.query.page : 1,
+      paginate: itemsPerPage
     })
     return res.json(products)
   } catch (error) {
