@@ -12,8 +12,7 @@ const { model } = require('../helpers/sequelizeHelper')
 exports.getUsers = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const allUsers = await model('User').findAndCountAll()
-    const users = await model('User').findAll({
+    const users = await model('User').paginate({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
       include: [
         {
@@ -28,13 +27,10 @@ exports.getUsers = async (req, res) => {
           }
         }
       ],
-      offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage,
-      limit: itemsPerPage
+      page: req.query.page ? req.query.page : 1,     // Default 1
+      paginate: itemsPerPage                         // Default 25
     })
-    return res.json({
-      data: users,
-      totalPages: Math.ceil(allUsers.count / itemsPerPage)
-    })
+    return res.json(users)
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")
@@ -174,12 +170,11 @@ exports.deleteUser = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const itemsPerPage = 4
-    const allProducts = await model('Product').findAndCountAll()
-    const products = await model('Product').findAll({ offset: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage, limit: itemsPerPage })
-    return res.json({
-      data: products,
-      totalPages: Math.ceil(allProducts.count / itemsPerPage)
+    const products = await model('Product').paginate({
+      page: req.query.page ? req.query.page : 1,     // Default 1
+      paginate: itemsPerPage                         // Default 25
     })
+    return res.json(products)
   } catch (error) {
     console.error(error)
     return res.status(500).json("Something went wrong!")

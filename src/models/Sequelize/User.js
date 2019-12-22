@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const sequelizePaginate = require('sequelize-paginate')
 
 const sequelize = require('../../config/dbconfig/SequelizeDB')
 
@@ -31,4 +32,5 @@ const User = sequelize.define('user', {
   }
 })
 
+sequelizePaginate.paginate(User)
 module.exports = User
