@@ -11,7 +11,6 @@ const { model } = require('../helpers/sequelizeHelper')
 
 exports.getUsers = async (req, res) => {
   try {
-    const itemsPerPage = 4
     const users = await model('User').paginate({
       attributes: ['id', 'username', 'email', 'createdAt', 'updatedAt'],
       include: [
@@ -28,7 +27,7 @@ exports.getUsers = async (req, res) => {
         }
       ],
       page: req.query.page ? req.query.page : 1,     // Default 1
-      paginate: itemsPerPage                         // Default 25
+      paginate: 4                                    // Default 25
     })
     return res.json(users)
   } catch (error) {
@@ -169,10 +168,9 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const itemsPerPage = 4
     const products = await model('Product').paginate({
       page: req.query.page ? req.query.page : 1,
-      paginate: itemsPerPage
+      paginate: 4
     })
     return res.json(products)
   } catch (error) {
