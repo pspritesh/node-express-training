@@ -8,13 +8,10 @@ const PDFDocument = require('pdfkit')
 const randomstring = require("randomstring")
 
 const mailer = require('../config/mailer')
-const { imgUploadToS3 } = require('../helpers/awsHelper')
 
 exports.getUsers = async (req, res) => {
   try {
-    const itemsPerPage = 4
-    const userCount = await model('user').find().countDocuments()
-    const users = await model('user').aggregate([
+    const usersAggregate = model('user').aggregate([
       {
         $lookup: {
           from: "products",
@@ -42,15 +39,15 @@ exports.getUsers = async (req, res) => {
         createdAt: { $first: '$createdAt' },
         updatedAt: { $first: '$updatedAt' }
       } },
-      { $sort: { _id: 1 } },
-      { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
-      { $limit: itemsPerPage }
+      { $sort: { _id: 1 } }
     ])
-    if (users.length) {
-      return res.json({
-        data: users,
-        totalPages: Math.ceil(userCount / itemsPerPage)
-      })
+    const users = await model('user').aggregatePaginate(usersAggregate, {
+      page: req.query.page ? req.query.page : 1,
+      limit: 4
+    })
+
+    if (users) {
+      return res.json(users)
     } else {
       return res.status(404).json('No users found!')
     }
@@ -192,23 +189,17 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const itemsPerPage = 4
-    const productCount = await model('product').aggregate([
-      { $match: { price: { $gte: 10 } } },
-      { $group: { _id: "$name", total: { $sum: "$price" } } },
-    ])
-    const products = await model('product').aggregate([
+    const productsAggregate = model('product').aggregate([
       { $match: { price: { $gte: 10 } } },
       { $project: { _id: 1, name: 1, price: 1, about: '$description', image: 1 } },
-      { $sort: { price: 1 } },
-      { $skip: ((req.query.page ? req.query.page : 1) - 1) * itemsPerPage },
-      { $limit: itemsPerPage }
+      { $sort: { price: 1 } }
     ])
-    if (products.length) {
-      return res.json({
-        data: products,
-        totalPages: Math.ceil(productCount.length / itemsPerPage)
-      })
+    const products = await model('product').aggregatePaginate(productsAggregate, {
+      page: req.query.page ? req.query.page : 1,
+      limit: 4
+    })
+    if (products) {
+      return res.json(products)
     } else {
       return res.status(404).json('No products found!')
     }

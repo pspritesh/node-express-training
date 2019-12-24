@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 
 const productSchema = new Schema({
   name: {
@@ -22,4 +23,5 @@ const productSchema = new Schema({
   timestamps: true
 })
 
+productSchema.plugin(aggregatePaginate)
 module.exports = model('product', productSchema)
