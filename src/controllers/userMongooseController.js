@@ -41,6 +41,7 @@ exports.getUsers = async (req, res) => {
       } },
       { $sort: { _id: 1 } }
     ])
+
     const users = await model('user').aggregatePaginate(usersAggregate, {
       page: req.query.page ? req.query.page : 1,
       limit: 4
@@ -194,10 +195,12 @@ exports.getAllProducts = async (req, res) => {
       { $project: { _id: 1, name: 1, price: 1, about: '$description', image: 1 } },
       { $sort: { price: 1 } }
     ])
+
     const products = await model('product').aggregatePaginate(productsAggregate, {
       page: req.query.page ? req.query.page : 1,
       limit: 4
     })
+
     if (products) {
       return res.json(products)
     } else {
