@@ -11,7 +11,7 @@ const mailer = require('../config/mailer')
 
 exports.getUsers = async (req, res) => {
   try {
-    const usersAggregate = model('user').aggregate([
+    let usersAggregate = model('user').aggregate([
       {
         $lookup: {
           from: "products",
@@ -190,7 +190,7 @@ exports.deleteUser = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const productsAggregate = model('product').aggregate([
+    let productsAggregate = model('product').aggregate([
       { $match: { price: { $gte: 10 } } },
       { $project: { _id: 1, name: 1, price: 1, about: '$description', image: 1 } },
       { $sort: { price: 1 } }
