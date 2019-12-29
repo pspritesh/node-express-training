@@ -1,9 +1,9 @@
-const express = require('express')
-const router = new express.Router()
+const express = require('express');
+const router = new express.Router();
 
-const auth = require('../middlewares/auth')
-const error404Controller = require('../controllers/error404Controller')
-const loginController = require('../controllers/loginController')
+const auth = require('../middlewares/auth');
+const error404Controller = require('../controllers/error404Controller');
+const loginController = require('../controllers/loginController');
 
 // Global swagger definition for Success response format.
 /**
@@ -80,12 +80,12 @@ const loginController = require('../controllers/loginController')
  *        description: Internal server error.
  *        $ref: '#/definitions/Error'
  * */
-router.get('/api/login', loginController.jwtLogin)
-router.use('/api', auth.jwtAuth, require('./apiRoutes'))
+router.get('/api/login', loginController.jwtLogin);
+router.use('/api', auth.jwtAuth, require('./apiRoutes'));
 // router.use('/api', auth.checkJwt, auth.checkScopes, require('./apiRoutes'))
-router.use('/', require('./webRoutes'))
+router.use('/', require('./webRoutes'));
 
 // Handles 404 requests
-router.use(error404Controller.error404)
+router.use(error404Controller.error404);
 
 module.exports = router

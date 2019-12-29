@@ -1,79 +1,79 @@
-const jwt = require('jsonwebtoken')
-const jwt2 = require('express-jwt')
-const jwtAuthz = require('express-jwt-authz')
-const jwksRsa = require('jwks-rsa')
-const { model: mongooseModel } = require('mongoose')
+const jwt = require('jsonwebtoken');
+const jwt2 = require('express-jwt');
+const jwtAuthz = require('express-jwt-authz');
+const jwksRsa = require('jwks-rsa');
+const { model: mongooseModel } = require('mongoose');
 
-const { model: sequelizeModel } = require('../helpers/sequelizeHelper')
+const { model: sequelizeModel } = require('../helpers/sequelizeHelper');
 
 exports.custom = async (req, res, next) => {
   if (req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1]
-    let user = await sequelizeModel('User').findAll({ where: { api_token: token } })
+    const token = req.headers.authorization.split(' ')[1];
+    let user = await sequelizeModel('User').findAll({ where: { api_token: token } });
     if (user.length) {
-      next()
+      next();
     } else {
-      user = await mongooseModel('user').find({ apiToken: token })
+      user = await mongooseModel('user').find({ apiToken: token });
       if (user.length) {
-        next()
+        next();
       } else {
-        return res.status(401).json('Not authenticated!')
+        return res.status(401).json('Not authenticated!');
       }
     }
   } else {
-    return res.status(401).json('Not authenticated!')
+    return res.status(401).json('Not authenticated!');
   }
 }
 
 exports.jwtAuth = (req, res, next) => {
   if (req.headers.authorization) {
     try {
-      let decodedToken = jwt.verify(req.headers.authorization.split(" ")[1], process.env.APP_KEY)
+      let decodedToken = jwt.verify(req.headers.authorization.split(' ')[1], process.env.APP_KEY);
       if (decodedToken) {
-        req.userId = decodedToken.userId
-        next()
+        req.userId = decodedToken.userId;
+        next();
       } else {
-        return res.status(401).json('Not authenticated!')
+        return res.status(401).json('Not authenticated!');
       }
     } catch (error) {
-      return res.status(401).json("Not authenticated!")
+      return res.status(401).json('Not authenticated!');
     }
   } else {
-    return res.status(401).json('Not authenticated!')
+    return res.status(401).json('Not authenticated!');
   }
 }
 
 exports.mongoAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const data = await mongooseModel('user').findById(req.userId)
+      const data = await mongooseModel('user').findById(req.userId);
       if (data) {
-        next()
+        next();
       } else {
-        return res.status(401).json('You are not authorised to access this page!')
+        return res.status(401).json('You are not authorised to access this page!');
       }
     } catch (error) {
-      return res.status(401).json('You are not authorised to access this page!')
+      return res.status(401).json('You are not authorised to access this page!');
     }
   } else {
-    return res.status(401).json('You are not authorised to access this page!')
+    return res.status(401).json('You are not authorised to access this page!');
   }
 }
 
 exports.sqlAuthorize = async (req, res, next) => {
   if (req.userId) {
     try {
-      const user = await sequelizeModel('User').findAll({ where: {id: parseInt(req.userId)} })
+      const user = await sequelizeModel('User').findAll({ where: {id: parseInt(req.userId)} });
       if (user.length) {
-        next()
+        next();
       } else {
-        return res.status(401).json('You are not authorised to access this page!')
+        return res.status(401).json('You are not authorised to access this page!');
       }
     } catch (error) {
-      return res.status(401).json('You are not authorised to access this page!')
+      return res.status(401).json('You are not authorised to access this page!');
     }
   } else {
-    return res.status(401).json('You are not authorised to access this page!')
+    return res.status(401).json('You are not authorised to access this page!');
   }
 }
 
@@ -89,6 +89,6 @@ exports.checkJwt = jwt2({
   audience: process.env.AUDIENCE,
   issuer: process.env.ISSUER,
   algorithms: ['RS256']
-})
+});
 
-exports.checkScopes = jwtAuthz([ 'read:messages' ])
+exports.checkScopes = jwtAuthz([ 'read:messages' ]);

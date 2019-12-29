@@ -1,4 +1,4 @@
-let config = {}
+let config = {};
 
 /* Swagger Definition */
 config.swaggerDefinition = {
@@ -17,12 +17,12 @@ config.swaggerDefinition = {
       'in': 'header'
     }
   }
-}
+};
 
 config.swaggerOptions = {
   'customSiteTitle': 'Node Express Training',
   'customCss': '.swagger-ui .topbar { display: none }',
   'customfavIcon': 'https://editor.swagger.io/dist/favicon-32x32.png'
-}
+};
 
 module.exports = config

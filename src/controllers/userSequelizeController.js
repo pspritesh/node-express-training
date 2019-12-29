@@ -32,7 +32,7 @@ exports.getUsers = async (req, res) => {
     return res.json(users)
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -54,7 +54,7 @@ exports.getUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -89,7 +89,7 @@ exports.addUser = async (req, res) => {
               Password: ${req.body.password}<br>
               Thank you for joining us. Good luck.<br>
             </p>`
-          ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
+          ).then(() => console.log('Email sent successfully!')).catch(err => console.error(err))
           return res.status(201).json('User added successfully!')
         } else {
           return res.status(404).json('Could not create profile for user!')
@@ -102,7 +102,7 @@ exports.addUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -143,7 +143,7 @@ exports.updateUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -162,7 +162,7 @@ exports.deleteUser = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -175,7 +175,7 @@ exports.getAllProducts = async (req, res) => {
     return res.json(products)
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -203,7 +203,7 @@ exports.getProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -221,7 +221,7 @@ exports.createProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -244,7 +244,7 @@ exports.updateProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -258,7 +258,7 @@ exports.deleteProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -281,7 +281,7 @@ exports.addNewProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -301,7 +301,7 @@ exports.addNewProductImage = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -315,7 +315,7 @@ exports.getProductImage = async (req, res) => {
       /**** Reading the entire file to make it available for users */
       // fs.readFile(path.join(path.dirname(process.mainModule.filename), product[0].image), (err, data) => {
       //   if (err) {
-      //     return res.status(404).json("File not found!")
+      //     return res.status(404).json('File not found!')
       //   }
       //   res.setHeader('Content-Type', 'application/jpg')
       //   res.setHeader('Content-Disposition', `inline; filename=${product[0].image}`)
@@ -332,7 +332,7 @@ exports.getProductImage = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -346,15 +346,15 @@ exports.generatePDF = async (req, res) => {
       res.setHeader('Content-Disposition', `inline; filename=${pdf}`)
       pdfDoc.pipe(fs.createWriteStream(path.join(path.dirname(process.mainModule.filename), 'src/public/files/images', pdf)))
       pdfDoc.pipe(res)
-      pdfDoc.text("Hello World!")
-      pdfDoc.fontSize(18).text("Hello World!", {
+      pdfDoc.text('Hello World!')
+      pdfDoc.fontSize(18).text('Hello World!', {
         underline: true
       })
       pdfDoc.end()
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }
 
@@ -378,6 +378,6 @@ exports.assignProduct = async (req, res) => {
     }
   } catch (error) {
     console.error(error)
-    return res.status(500).json("Something went wrong!")
+    return res.status(500).json('Something went wrong!')
   }
 }

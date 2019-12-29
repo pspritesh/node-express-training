@@ -1,6 +1,6 @@
-const AWS = require('aws-sdk')
-const multer = require('multer')
-const multerS3 = require('multer-s3')
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.ACCESS_KEY,
@@ -17,32 +17,32 @@ exports.imgUploadToS3 = multer({
     'metadata': (req, file, cb) => {
       cb(null, {
         'fieldName': file.fieldname
-      })
+      });
     },
     'key': (req, file, cb) => {
-      let path = ''
+      let path = '';
       if (req.originalUrl.includes('mongo')) {
-        path += req.originalUrl.includes('mongoose') ? 'mongoose/' : 'mongodb/'
+        path += req.originalUrl.includes('mongoose') ? 'mongoose/' : 'mongodb/';
       } else if (req.originalUrl.includes('sequelize')) {
-        path += 'sequelize/'
+        path += 'sequelize/';
       } else if (req.originalUrl.includes('mysql')) {
-        path += 'mysql/'
+        path += 'mysql/';
       }
       if (req.originalUrl.includes('product')) {
-        path += 'productImages/'
+        path += 'productImages/';
       }
-      cb(null, path + Date.now().toString() + '-' + file.originalname)
+      cb(null, path + Date.now().toString() + '-' + file.originalname);
     }
   }),
   'fileFilter': (req, file, cb) => {
-    let mimetypes = []
+    let mimetypes = [];
     if (req.originalUrl.includes('image') || req.originalUrl.includes('logo')) {
-      mimetypes = ['image/png', 'image/jpg', 'image/jpeg']
+      mimetypes = ['image/png', 'image/jpg', 'image/jpeg'];
     }
     if (mimetypes.includes(file.mimetype)) {
-      cb(null, true)
+      cb(null, true);
     } else {
-      cb(null, false)
+      cb(null, false);
     }
   }
-})
+});

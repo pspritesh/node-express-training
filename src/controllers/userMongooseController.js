@@ -1,23 +1,23 @@
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
-const bcrypt = require('bcrypt')
-const mongodb = require('mongodb')
-const { model } = require('mongoose')
-const PDFDocument = require('pdfkit')
-const randomstring = require("randomstring")
+const bcrypt = require('bcrypt');
+const mongodb = require('mongodb');
+const { model } = require('mongoose');
+const PDFDocument = require('pdfkit');
+const randomstring = require('randomstring');
 
-const mailer = require('../config/mailer')
+const mailer = require('../config/mailer');
 
 exports.getUsers = async (req, res) => {
   try {
     let usersAggregate = model('user').aggregate([
       {
         $lookup: {
-          from: "products",
-          localField: "products",
-          foreignField: "_id",
-          as: "products"
+          from: 'products',
+          localField: 'products',
+          foreignField: '_id',
+          as: 'products'
         }
       },
       { $unwind: {
@@ -40,21 +40,21 @@ exports.getUsers = async (req, res) => {
         updatedAt: { $first: '$updatedAt' }
       } },
       { $sort: { _id: 1 } }
-    ])
+    ]);
 
     const users = await model('user').aggregatePaginate(usersAggregate, {
       page: req.query.page ? req.query.page : 1,
       limit: 4
-    })
+    });
 
     if (users) {
-      return res.json(users)
+      return res.json(users);
     } else {
-      return res.status(404).json('No users found!')
+      return res.status(404).json('No users found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
@@ -64,10 +64,10 @@ exports.getUser = async (req, res) => {
       { $match: { _id: new mongodb.ObjectId(req.params.userId) } },
       {
         $lookup: {
-          from: "products",
-          localField: "products",
-          foreignField: "_id",
-          as: "products"
+          from: 'products',
+          localField: 'products',
+          foreignField: '_id',
+          as: 'products'
         }
       },
       { $unwind: {
@@ -89,23 +89,23 @@ exports.getUser = async (req, res) => {
         createdAt: { $first: '$createdAt' },
         updatedAt: { $first: '$updatedAt' }
       } }
-    ])
+    ]);
     if (data.length) {
-      return res.json(data)
+      return res.json(data);
     } else {
-      return res.status(404).json('User not found!')
+      return res.status(404).json('User not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.addUser = async (req, res) => {
   try {
-    const data = await model('user').findOne({ username: req.body.username })
+    const data = await model('user').findOne({ username: req.body.username });
     if (!data) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+      const hashedPassword = await bcrypt.hash(req.body.password, 256);
       const user = await model('user').create({
         profile: {
           fname: req.body.fname,
@@ -116,7 +116,7 @@ exports.addUser = async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
         apiToken: randomstring.generate()
-      })
+      });
       if (user) {
         mailer.sendMail(
           req.body.email,
@@ -130,25 +130,25 @@ exports.addUser = async (req, res) => {
             Password: ${req.body.password}<br>
             Thank you for joining us. Good luck.<br>
           </p>`
-        ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-        return res.status(201).json('User added successfully!')
+        ).then(() => console.log('Email sent successfully!')).catch(err => console.error(err));
+        return res.status(201).json('User added successfully!');
       } else {
-        return res.status(404).json('Something went wrong!')
+        return res.status(404).json('Something went wrong!');
       }
     } else {
-      return res.status(404).json('Username is already taken, please choose a unique one!')
+      return res.status(404).json('Username is already taken, please choose a unique one!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.updateUser = async (req, res) => {
   try {
-    const data = await model('user').findOne({ username: req.body.username })
+    const data = await model('user').findOne({ username: req.body.username });
     if (!data || data._id === new mongodb.ObjectId(req.params.userId)) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 256)
+      const hashedPassword = await bcrypt.hash(req.body.password, 256);
       const user = await model('user').findByIdAndUpdate(req.params.userId, {
         profile: {
           fname: req.body.fname,
@@ -159,32 +159,32 @@ exports.updateUser = async (req, res) => {
         email: req.body.email,
         password: hashedPassword,
         apiToken: randomstring.generate()
-      }, { useFindAndModify: false })
+      }, { useFindAndModify: false });
       if (user) {
-        return res.status(201).json('User updated successfully!')
+        return res.status(201).json('User updated successfully!');
       } else {
-        return res.status(404).json('Nothing to update!')
+        return res.status(404).json('Nothing to update!');
       }
     } else {
-      return res.status(404).json('Username is already taken, please choose a unique one!')
+      return res.status(404).json('Username is already taken, please choose a unique one!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await model('user').findByIdAndDelete(req.params.userId, { useFindAndModify: false })
+    const user = await model('user').findByIdAndDelete(req.params.userId, { useFindAndModify: false });
     if (user) {
-      return res.json('User delete successfully!')
+      return res.json('User delete successfully!');
     } else {
-      return res.status(404).json('Nothing to delete!')
+      return res.status(404).json('Nothing to delete!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
@@ -194,35 +194,35 @@ exports.getAllProducts = async (req, res) => {
       { $match: { price: { $gte: 10 } } },
       { $project: { _id: 1, name: 1, price: 1, about: '$description', image: 1 } },
       { $sort: { price: 1 } }
-    ])
+    ]);
 
     const products = await model('product').aggregatePaginate(productsAggregate, {
       page: req.query.page ? req.query.page : 1,
       limit: 4
-    })
+    });
 
     if (products) {
-      return res.json(products)
+      return res.json(products);
     } else {
-      return res.status(404).json('No products found!')
+      return res.status(404).json('No products found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.getUserProducts = async (req, res) => {
   try {
-    const userProducts = await model('user').findById(req.params.userId).select('products -_id').populate('products')
+    const userProducts = await model('user').findById(req.params.userId).select('products -_id').populate('products');
     if (userProducts) {
-      return res.json(userProducts)
+      return res.json(userProducts);
     } else {
-      return res.status(404).json('Products not found!')
+      return res.status(404).json('Products not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
@@ -232,15 +232,15 @@ exports.createProduct = async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
-    })
+    });
     if (data) {
-      return res.status(201).json('Product added successfully!')
+      return res.status(201).json('Product added successfully!');
     } else {
-      return res.status(404).json('Could not add product!')
+      return res.status(404).json('Could not add product!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
@@ -250,173 +250,175 @@ exports.updateProduct = async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description
-    }, { useFindAndModify: false })
+    }, { useFindAndModify: false });
     if (product) {
-      return res.status(201).json('Product updated successfully!')
+      return res.status(201).json('Product updated successfully!');
     } else {
-      return res.status(404).json('Product not updated!')
+      return res.status(404).json('Product not updated!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.addNewProduct = async (req, res) => {
   try {
-    const userData = await model('user').findById(req.params.userId)
+    const userData = await model('user').findById(req.params.userId);
     if (userData) {
       const product = await model('product').create({
         name: req.body.name,
         price: req.body.price,
         description: req.body.description
-      })
+      });
       if (product) {
-        userData.products.push(product)
-        const user = await model('user').findByIdAndUpdate(req.params.userId, userData, { useFindAndModify: false })
+        userData.products.push(product);
+        const user = await model('user').findByIdAndUpdate(req.params.userId, userData, { useFindAndModify: false });
         if (user) {
-          return res.status(201).json('Product created and assigned to user successfully!')
+          return res.status(201).json('Product created and assigned to user successfully!');
         } else {
-          return res.status(404).json('Could not assign product to user!')
+          return res.status(404).json('Could not assign product to user!');
         }
       } else {
-        return res.status(404).json('Could not create product!')
+        return res.status(404).json('Could not create product!');
       }
     } else {
-      return res.status(404).json('User not found!')
+      return res.status(404).json('User not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.addNewProductImage = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.productId)
+    const product = await model('product').findById(req.params.productId);
     if (product) {
       if (req.file) {
         const product = await model('product').findByIdAndUpdate(req.params.productId, {
           image: req.file.location
-        }, { useFindAndModify: false })
+        }, { useFindAndModify: false });
         if (product) {
-          return res.status(201).json('Image assigned to product successfully!')
+          return res.status(201).json('Image assigned to product successfully!');
         } else {
-          return res.status(404).json('Nothing to upload!')
+          return res.status(404).json('Nothing to upload!');
         }
       } else {
-        return res.status(404).json('No image found to upload!')
+        return res.status(404).json('No image found to upload!');
       }
     } else {
-      return res.status(404).json('Product not found!')
+      return res.status(404).json('Product not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json('Something went wrong!')
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.getProductImage = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.productId)
+    const product = await model('product').findById(req.params.productId);
     if (product) {
       /**** Sending file path in response */
-      // return res.status(200).json(product.image)
+      // return res.status(200).json(product.image);
 
       /**** Reading the entire file to make it available for users */
       // fs.readFile(path.join(path.dirname(process.mainModule.filename), product.image), (err, data) => {
       //   if (err) {
-      //     return res.status(404).json("File not found!")
+      //     return res.status(404).json('File not found!');
       //   }
-      //   res.setHeader('Content-Type', 'application/jpg')
-      //   res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
-      //   return res.status(200).json(data)
-      // })
+      //   res.setHeader('Content-Type', 'application/jpg');
+      //   res.setHeader('Content-Disposition', `inline; filename=${product.image}`);
+      //   return res.status(200).json(data);
+      // });
 
       /**** Streaming the file for users */
-      const file = fs.createReadStream(path.join(path.dirname(process.mainModule.filename), product.image))
-      res.setHeader('Content-Type', 'application/jpg')
-      res.setHeader('Content-Disposition', `inline; filename=${product.image}`)
-      file.pipe(res)
+      const file = fs.createReadStream(path.join(path.dirname(process.mainModule.filename), product.image));
+      res.setHeader('Content-Type', 'application/jpg');
+      res.setHeader('Content-Disposition', `inline; filename=${product.image}`);
+      file.pipe(res);
     } else {
-      return res.status(404).json('Product not found!')
+      return res.status(404).json('Product not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.generatePDF = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.productId)
+    const product = await model('product').findById(req.params.productId);
     if (product) {
-      const pdfDoc = new PDFDocument()
-      const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf'
-      res.setHeader('Content-Type', 'application/pdf')
-      res.setHeader('Content-Disposition', `inline; filename=${pdf}`)
-      pdfDoc.pipe(fs.createWriteStream(path.join(path.dirname(process.mainModule.filename), 'src/public/files/images', pdf)))
-      pdfDoc.pipe(res)
-      pdfDoc.text("Hello World!")
-      pdfDoc.fontSize(18).text("Hello World!", {
+      const pdfDoc = new PDFDocument();
+      const pdf = new Date().toISOString() + '-' + 'myTestPDF.pdf';
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename=${pdf}`);
+      pdfDoc.pipe(fs.createWriteStream(path.join(path.dirname(process.mainModule.filename), 'src/public/files/images', pdf)));
+      pdfDoc.pipe(res);
+      pdfDoc.text('Hello World!');
+      pdfDoc.fontSize(18).text('Hello World!', {
         underline: true
-      })
-      pdfDoc.end()
+      });
+      pdfDoc.end();
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.assignProduct = async (req, res) => {
   try {
-    const user = await model('user').findById(req.params.userId)
+    const user = await model('user').findById(req.params.userId);
     if (user) {
-      const product = await model('product').findById(req.params.productId)
+      const product = await model('product').findById(req.params.productId);
       if (product) {
-        user.products.push(product)
+        user.products.push(product);
         /**** Here to store all the raw data (without other metadata and other stuff) from this product, we can use _doc */
         // user.products.push(product._doc)
-        const newUserData = await model('user').findByIdAndUpdate(req.params.userId, user, { useFindAndModify: false })
+        const newUserData = await model('user').findByIdAndUpdate(req.params.userId, user, { useFindAndModify: false });
         if (newUserData) {
-          return res.status(201).json('Product assigned successfully!')
+          return res.status(201).json('Product assigned successfully!');
         } else {
-          return res.status(404).json('Could not assign product to user!')
+          return res.status(404).json('Could not assign product to user!');
         }
       } else {
-        return res.status(404).json('Product not found!')
+        return res.status(404).json('Product not found!');
       }
     } else {
-      return res.status(404).json('User not found!')
+      return res.status(404).json('User not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await model('product').findById(req.params.productId)
+    const product = await model('product').findById(req.params.productId);
     if (product) {
-      const userData = await model('user').find()
-      count = 0
+      const userData = await model('user').find();
+      count = 0;
       userData.forEach(user => {
-        if (user.products.pull(product)) count++
-        user.save()
-      })
-      const deleteProduct = await model('product').findByIdAndDelete(req.params.productId, { useFindAndModify: false })
+        if (user.products.pull(product)) {
+          count++;
+        }
+        user.save();
+      });
+      const deleteProduct = await model('product').findByIdAndDelete(req.params.productId, { useFindAndModify: false });
       if (deleteProduct) {
-        return res.json((count > 0) ? "Product deleted and cascaded successfully!" : "Product deleted successfully!")
+        return res.json((count > 0) ? 'Product deleted and cascaded successfully!' : 'Product deleted successfully!');
       } else {
-        return res.status(404).json("Unable to delete product!")
+        return res.status(404).json('Unable to delete product!');
       }
     } else {
-      return res.status(404).json("No product to delete!")
+      return res.status(404).json('No product to delete!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }

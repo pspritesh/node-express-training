@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize')
-const sequelizePaginate = require('sequelize-paginate')
+const Sequelize = require('sequelize');
+const sequelizePaginate = require('sequelize-paginate');
 
-const sequelize = require('../../config/dbconfig/SequelizeDB')
+const sequelize = require('../../config/dbconfig/SequelizeDB');
 
 const userProducts = sequelize.define('userProducts', {
   id: {
@@ -10,7 +10,7 @@ const userProducts = sequelize.define('userProducts', {
     allowNull: false,
     primaryKey: true
   }
-})
+});
 
-sequelizePaginate.paginate(userProducts)
+sequelizePaginate.paginate(userProducts);
 module.exports = userProducts

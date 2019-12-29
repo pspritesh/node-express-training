@@ -1,40 +1,40 @@
-const mailer = require('../config/mailer')
-const User = require('../models/MySQL/User')
+const mailer = require('../config/mailer');
+const User = require('../models/MySQL/User');
 
 exports.getUsers = async (req, res) => {
-  const user = new User()
+  const user = new User();
   try {
-    data = await user.getAll()
+    data = await user.getAll();
     if (data[0].length) {
-      return res.json(data[0])
+      return res.json(data[0]);
     } else {
-      return res.status(404).json('No users found!')
+      return res.status(404).json('No users found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.getUser = async (req, res) => {
-  const user = new User()
+  const user = new User();
   try {
-    data = await user.get(parseInt(req.params.id))
+    data = await user.get(parseInt(req.params.id));
     if (data[0].length) {
-      return res.json(data[0])
+      return res.json(data[0]);
     } else {
-      return res.status(404).json('No users found!')
+      return res.status(404).json('No users found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.addUser = async (req, res) => {
-  const user = new User()
+  const user = new User();
   try {
-    data = await user.save(req.body)
+    data = await user.save(req.body);
     if (data && data[0].affectedRows) {
       mailer.sendMail(
         req.body.email,
@@ -48,43 +48,43 @@ exports.addUser = async (req, res) => {
           Password: ${req.body.password}<br>
           Thank you for joining us. Good luck.<br>
         </p>`
-      ).then(() => console.log("Email sent successfully!")).catch(err => console.error(err))
-      return res.status(201).json('User added successfully!')
+      ).then(() => console.log('Email sent successfully!')).catch(err => console.error(err));
+      return res.status(201).json('User added successfully!');
     } else {
-      return res.status(404).json('Could not add user!')
+      return res.status(404).json('Could not add user!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.updateUser = async (req, res) => {
-  const user = new User()
+  const user = new User();
   try {
-    data = await user.update(req.body, parseInt(req.params.id))
+    data = await user.update(req.body, parseInt(req.params.id));
     if (data && data[0].affectedRows) {
-      return res.status(201).json('User updated successfully!')
+      return res.status(201).json('User updated successfully!');
     } else {
-      return res.status(404).json('User not found!')
+      return res.status(404).json('User not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
 
 exports.deleteUser = async (req, res) => {
-  const user = new User()
+  const user = new User();
   try {
-    data = await user.delete(parseInt(req.params.id))
+    data = await user.delete(parseInt(req.params.id));
     if (data && data[0].affectedRows) {
-      return res.json('User deleted successfully!')
+      return res.json('User deleted successfully!');
     } else {
-      return res.status(404).json('User not found!')
+      return res.status(404).json('User not found!');
     }
   } catch (error) {
-    console.error(error)
-    return res.status(500).json("Something went wrong!")
+    console.error(error);
+    return res.status(500).json('Something went wrong!');
   }
 }
