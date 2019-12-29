@@ -4,7 +4,6 @@ const path = require('path')
 /**** Core modules */
 
 /**** 3rd party modules */
-// const AWS = require('aws-sdk')
 const bodyParser = require('body-parser')
 const compression = require('compression')
 const express = require('express')
@@ -25,12 +24,6 @@ const swaggerDefinition = config.swaggerDefinition
 /**** Local modules */
 
 const app = express()
-
-// const S3 = new AWS.S3({
-//   accessKeyId: process.env.ACCESS_KEY,
-//   secretAccessKey: process.env.SECRET_ACCESS_KEY,
-//   region: process.env.S3_REGION
-// })
 
 // Create log file for morgan which stores all the log data
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'src/logs', 'access.log'), { flags: 'a' })
