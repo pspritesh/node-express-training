@@ -39,6 +39,7 @@ app.use(compression());
 
 // Best practices app settings
 app.set('port', process.env.HTTP_PORT || 8000);
+app.set('app URL', process.env.APP_URL || 'localhost:8000');
 app.set('title', process.env.APP_NAME);
 app.set('query parser', `extended`);
 
@@ -95,7 +96,7 @@ sequelizeRelations();
 sequelize.sync()
   .then(() => {
     app.listen(app.get('port'), () => {
-      console.info(`Find the server at: ${process.env.APP_URL}`);
+      console.info(`Find the server at: ${app.get('app URL')}`);
     });
   })
   .catch(err => console.error(err));
