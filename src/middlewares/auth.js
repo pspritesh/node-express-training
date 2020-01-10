@@ -5,6 +5,7 @@ const jwksRsa = require('jwks-rsa');
 const { model: mongooseModel } = require('mongoose');
 
 const { model: sequelizeModel } = require('../helpers/sequelizeHelper');
+const { responseObj } = require('../helpers/utilsHelper');
 
 exports.custom = async (req, res, next) => {
   if (req.headers.authorization) {
@@ -17,11 +18,11 @@ exports.custom = async (req, res, next) => {
       if (user.length) {
         next();
       } else {
-        return res.status(401).json('Not authenticated!');
+        return res.status(401).json(responseObj('Not authenticated!'));
       }
     }
   } else {
-    return res.status(401).json('Not authenticated!');
+    return res.status(401).json(responseObj('Not authenticated!'));
   }
 }
 
@@ -33,13 +34,13 @@ exports.jwtAuth = (req, res, next) => {
         req.userId = decodedToken.userId;
         next();
       } else {
-        return res.status(401).json('Not authenticated!');
+        return res.status(401).json(responseObj('Not authenticated!'));
       }
     } catch (error) {
-      return res.status(401).json('Not authenticated!');
+      return res.status(401).json(responseObj('Not authenticated!'));
     }
   } else {
-    return res.status(401).json('Not authenticated!');
+    return res.status(401).json(responseObj('Not authenticated!'));
   }
 }
 
@@ -50,13 +51,13 @@ exports.mongoAuthorize = async (req, res, next) => {
       if (data) {
         next();
       } else {
-        return res.status(401).json('You are not authorised to access this page!');
+        return res.status(401).json(responseObj('You are not authorised to access this page!'));
       }
     } catch (error) {
-      return res.status(401).json('You are not authorised to access this page!');
+      return res.status(401).json(responseObj('You are not authorised to access this page!'));
     }
   } else {
-    return res.status(401).json('You are not authorised to access this page!');
+    return res.status(401).json(responseObj('You are not authorised to access this page!'));
   }
 }
 
@@ -67,13 +68,13 @@ exports.sqlAuthorize = async (req, res, next) => {
       if (user.length) {
         next();
       } else {
-        return res.status(401).json('You are not authorised to access this page!');
+        return res.status(401).json(responseObj('You are not authorised to access this page!'));
       }
     } catch (error) {
-      return res.status(401).json('You are not authorised to access this page!');
+      return res.status(401).json(responseObj('You are not authorised to access this page!'));
     }
   } else {
-    return res.status(401).json('You are not authorised to access this page!');
+    return res.status(401).json(responseObj('You are not authorised to access this page!'));
   }
 }
 

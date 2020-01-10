@@ -20,6 +20,7 @@ const config = require('./src/config/config');
 const { mongoConnect } = require('./src/config/dbconfig/MongoDB');
 const sequelize = require('./src/config/dbconfig/SequelizeDB');
 const { configRelations: sequelizeRelations } = require('./src/helpers/sequelizeHelper');
+const { responseObj } = require('./src/helpers/utilsHelper');
 const swaggerDefinition = config.swaggerDefinition;
 /**** Local modules */
 
@@ -87,7 +88,7 @@ app.use(require('./src/routes/routes'));
 
 /**** eslint-disable no-unused-vars */
 // error handler
-app.use((err, req, res, next) => res.status(err.status || 500).json(err.message || 'Internal Server Error'));
+app.use((err, req, res, next) => res.status(err.status || 500).json(responseObj(err.message || 'Internal Server Error')));
 /**** eslint-enable no-unused-vars */
 
 // Establishes all relations for Sequelize

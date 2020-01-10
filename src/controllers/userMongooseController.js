@@ -8,6 +8,7 @@ const PDFDocument = require('pdfkit');
 const randomstring = require('randomstring');
 
 const mailer = require('../config/mailer');
+const { responseObj } = require('../helpers/utilsHelper');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -48,13 +49,13 @@ exports.getUsers = async (req, res) => {
     });
 
     if (users) {
-      return res.json(users);
+      return res.json(responseObj(null, true, users, true));
     } else {
-      return res.status(404).json('No users found!');
+      return res.status(404).json(responseObj('No users found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -91,13 +92,13 @@ exports.getUser = async (req, res) => {
       } }
     ]);
     if (data.length) {
-      return res.json(data);
+      return res.json(responseObj(null, true, data));
     } else {
-      return res.status(404).json('User not found!');
+      return res.status(404).json(responseObj('User not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -131,16 +132,16 @@ exports.addUser = async (req, res) => {
             Thank you for joining us. Good luck.<br>
           </p>`
         ).then(() => console.log('Email sent successfully!')).catch(err => console.error(err));
-        return res.status(201).json('User added successfully!');
+        return res.status(201).json(responseObj(null, true, { 'message': 'User added successfully!' }));
       } else {
-        return res.status(404).json('Something went wrong!');
+        return res.status(404).json(responseObj('Something went wrong!'));
       }
     } else {
-      return res.status(404).json('Username is already taken, please choose a unique one!');
+      return res.status(404).json(responseObj('Username is already taken, please choose a unique one!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -161,16 +162,16 @@ exports.updateUser = async (req, res) => {
         apiToken: randomstring.generate()
       }, { useFindAndModify: false });
       if (user) {
-        return res.status(201).json('User updated successfully!');
+        return res.status(201).json(responseObj(null, true, { 'message': 'User updated successfully!' }));
       } else {
-        return res.status(404).json('Nothing to update!');
+        return res.status(404).json(responseObj('Nothing to update!'));
       }
     } else {
-      return res.status(404).json('Username is already taken, please choose a unique one!');
+      return res.status(404).json(responseObj('Username is already taken, please choose a unique one!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -178,13 +179,13 @@ exports.deleteUser = async (req, res) => {
   try {
     const user = await model('user').findByIdAndDelete(req.params.userId, { useFindAndModify: false });
     if (user) {
-      return res.json('User delete successfully!');
+      return res.json(responseObj(null, true, { 'message': 'User delete successfully!' }));
     } else {
-      return res.status(404).json('Nothing to delete!');
+      return res.status(404).json(responseObj('Nothing to delete!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -202,13 +203,13 @@ exports.getAllProducts = async (req, res) => {
     });
 
     if (products) {
-      return res.json(products);
+      return res.json(responseObj(null, true, products, true));
     } else {
-      return res.status(404).json('No products found!');
+      return res.status(404).json(responseObj('No products found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -216,13 +217,13 @@ exports.getUserProducts = async (req, res) => {
   try {
     const userProducts = await model('user').findById(req.params.userId).select('products -_id').populate('products');
     if (userProducts) {
-      return res.json(userProducts);
+      return res.json(responseObj(null, true, userProducts));
     } else {
-      return res.status(404).json('Products not found!');
+      return res.status(404).json(responseObj('Products not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -234,13 +235,13 @@ exports.createProduct = async (req, res) => {
       description: req.body.description
     });
     if (data) {
-      return res.status(201).json('Product added successfully!');
+      return res.status(201).json(responseObj(null, true, { 'message': 'Product added successfully!' }));
     } else {
-      return res.status(404).json('Could not add product!');
+      return res.status(404).json(responseObj('Could not add product!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -252,13 +253,13 @@ exports.updateProduct = async (req, res) => {
       description: req.body.description
     }, { useFindAndModify: false });
     if (product) {
-      return res.status(201).json('Product updated successfully!');
+      return res.status(201).json(responseObj(null, true, { 'message': 'Product updated successfully!' }));
     } else {
-      return res.status(404).json('Product not updated!');
+      return res.status(404).json(responseObj('Product not updated!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -275,19 +276,19 @@ exports.addNewProduct = async (req, res) => {
         userData.products.push(product);
         const user = await model('user').findByIdAndUpdate(req.params.userId, userData, { useFindAndModify: false });
         if (user) {
-          return res.status(201).json('Product created and assigned to user successfully!');
+          return res.status(201).json(responseObj(null, true, { 'message': 'Product created and assigned to user successfully!' }));
         } else {
-          return res.status(404).json('Could not assign product to user!');
+          return res.status(404).json(responseObj('Could not assign product to user!'));
         }
       } else {
-        return res.status(404).json('Could not create product!');
+        return res.status(404).json(responseObj('Could not create product!'));
       }
     } else {
-      return res.status(404).json('User not found!');
+      return res.status(404).json(responseObj('User not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -300,19 +301,19 @@ exports.addNewProductImage = async (req, res) => {
           image: req.file.location
         }, { useFindAndModify: false });
         if (product) {
-          return res.status(201).json('Image assigned to product successfully!');
+          return res.status(201).json(responseObj(null, true, { 'message': 'Image assigned to product successfully!' }));
         } else {
-          return res.status(404).json('Nothing to upload!');
+          return res.status(404).json(responseObj('Nothing to upload!'));
         }
       } else {
-        return res.status(404).json('No image found to upload!');
+        return res.status(404).json(responseObj('No image found to upload!'));
       }
     } else {
-      return res.status(404).json('Product not found!');
+      return res.status(404).json(responseObj('Product not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -339,11 +340,11 @@ exports.getProductImage = async (req, res) => {
       res.setHeader('Content-Disposition', `inline; filename=${product.image}`);
       file.pipe(res);
     } else {
-      return res.status(404).json('Product not found!');
+      return res.status(404).json(responseObj('Product not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -365,7 +366,7 @@ exports.generatePDF = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -380,19 +381,19 @@ exports.assignProduct = async (req, res) => {
         // user.products.push(product._doc)
         const newUserData = await model('user').findByIdAndUpdate(req.params.userId, user, { useFindAndModify: false });
         if (newUserData) {
-          return res.status(201).json('Product assigned successfully!');
+          return res.status(201).json(responseObj(null, true, { 'message': 'Product assigned successfully!' }));
         } else {
-          return res.status(404).json('Could not assign product to user!');
+          return res.status(404).json(responseObj('Could not assign product to user!'));
         }
       } else {
-        return res.status(404).json('Product not found!');
+        return res.status(404).json(responseObj('Product not found!'));
       }
     } else {
-      return res.status(404).json('User not found!');
+      return res.status(404).json(responseObj('User not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -410,15 +411,15 @@ exports.deleteProduct = async (req, res) => {
       });
       const deleteProduct = await model('product').findByIdAndDelete(req.params.productId, { useFindAndModify: false });
       if (deleteProduct) {
-        return res.json((count > 0) ? 'Product deleted and cascaded successfully!' : 'Product deleted successfully!');
+        return res.json(responseObj(null, true, { 'message': (count > 0) ? 'Product deleted and cascaded successfully!' : 'Product deleted successfully!' }));
       } else {
-        return res.status(404).json('Unable to delete product!');
+        return res.status(404).json(responseObj('Unable to delete product!'));
       }
     } else {
-      return res.status(404).json('No product to delete!');
+      return res.status(404).json(responseObj('No product to delete!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }

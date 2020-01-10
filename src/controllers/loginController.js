@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const { responseObj } = require('../helpers/utilsHelper');
 const MongooseUser = require('../models/Mongoose/User');
 const SequelizeUser = require('../models/Sequelize/User');
 
@@ -15,13 +16,13 @@ exports.postLogin = async (req, res, next) => {
       token = await bcrypt.compare(req.body.password, mongooseUsers.password) ? mongooseUsers.apiToken : '';
     }
     if (token) {
-      return res.json({ apikey: token });
+      return res.json(responseObj(null, true, { 'token': token }));
     } else {
-      return res.status(404).json('User not found!');
+      return res.status(404).json(responseObj('User not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
 
@@ -50,12 +51,12 @@ exports.jwtLogin = async (req, res, next) => {
       );
     }
     if (token) {
-      return res.json({ token: token });
+      return res.json(responseObj(null, true, { 'token': token }));
     } else {
-      return res.status(404).json('User not found!');
+      return res.status(404).json(responseObj('User not found!'));
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json('Something went wrong!');
+    return res.status(500).json(responseObj('Something went wrong!'));
   }
 }
