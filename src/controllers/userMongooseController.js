@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
-const bcrypt = require('bcrypt');
-const mongodb = require('mongodb');
+const { hash } = require('bcrypt');
+const { ObjectId } = require('mongodb');
 const { model } = require('mongoose');
 const PDFDocument = require('pdfkit');
-const randomstring = require('randomstring');
+const { generate: generateRandomString } = require('randomstring');
 
 const { sendMail } = require('../config/mailer');
 const { responseObj } = require('../helpers/utilsHelper');
@@ -62,7 +62,7 @@ exports.getUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const data = await model('user').aggregate([
-      { $match: { _id: new mongodb.ObjectId(req.params.userId) } },
+      { $match: { _id: new ObjectId(req.params.userId) } },
       {
         $lookup: {
           from: 'products',
@@ -106,7 +106,7 @@ exports.addUser = async (req, res) => {
   try {
     const data = await model('user').findOne({ username: req.body.username });
     if (!data) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 256);
+      const hashedPassword = await hash(req.body.password, 256);
       const user = await model('user').create({
         profile: {
           fname: req.body.fname,
@@ -116,7 +116,7 @@ exports.addUser = async (req, res) => {
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        apiToken: randomstring.generate()
+        apiToken: generateRandomString()
       });
       if (user) {
         sendMail(
@@ -148,8 +148,8 @@ exports.addUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const data = await model('user').findOne({ username: req.body.username });
-    if (!data || data._id === new mongodb.ObjectId(req.params.userId)) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 256);
+    if (!data || data._id === new ObjectId(req.params.userId)) {
+      const hashedPassword = await hash(req.body.password, 256);
       const user = await model('user').findByIdAndUpdate(req.params.userId, {
         profile: {
           fname: req.body.fname,
@@ -159,7 +159,7 @@ exports.updateUser = async (req, res) => {
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        apiToken: randomstring.generate()
+        apiToken: generateRandomString()
       }, { useFindAndModify: false });
       if (user) {
         return res.status(201).json(responseObj(null, true, { 'message': 'User updated successfully!' }));

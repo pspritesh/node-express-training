@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const bcrypt = require('bcrypt');
-const datetime = require('node-datetime');
+const { hash } = require('bcrypt');
+const { create: currentDateTime } = require('node-datetime');
 const PDFDocument = require('pdfkit');
-const randomstring = require('randomstring');
+const { generate: generateRandomString } = require('randomstring');
 
 const { sendMail } = require('../config/mailer');
 const { model } = require('../helpers/sequelizeHelper');
@@ -65,15 +65,15 @@ exports.getUser = async (req, res) => {
 
 exports.addUser = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 256);
+    const hashedPassword = await hash(req.body.password, 256);
     const user = await model('User').findAll({ where: { username: req.body.username } });
     if (!user.length) {
       const user = await model('User').create({
         username: req.body.username,
         email: req.body.email,
         password: hashedPassword,
-        api_token: randomstring.generate(),
-        api_token_created_at: datetime.create().format('Y-m-d H:M:S')
+        api_token: generateRandomString(),
+        api_token_created_at: currentDateTime().format('Y-m-d H:M:S')
       });
       if (user) {
         const profile = await user.createProfile({
@@ -117,10 +117,12 @@ exports.updateUser = async (req, res) => {
     if (!user.length || user[0].id == parseInt(req.params.userId)) {
       const user = await model('User').findAll({ where: { id: parseInt(req.params.userId) } });
       if (user && user.length) {
-        const hashedPassword = await bcrypt.hash(req.body.password, 256);
+        const hashedPassword = await hash(req.body.password, 256);
         user[0].username = req.body.username;
         user[0].email = req.body.email;
         user[0].password = hashedPassword;
+        user[0].api_token = generateRandomString();
+        user[0].api_token_created_at = currentDateTime().format('Y-m-d H:M:S');
         user[0].save();
         const profile = await user[0].getProfile();
         if (profile) {
