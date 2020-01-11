@@ -7,7 +7,7 @@ const { model } = require('mongoose');
 const PDFDocument = require('pdfkit');
 const randomstring = require('randomstring');
 
-const mailer = require('../config/mailer');
+const { sendMail } = require('../config/mailer');
 const { responseObj } = require('../helpers/utilsHelper');
 
 exports.getUsers = async (req, res) => {
@@ -119,7 +119,7 @@ exports.addUser = async (req, res) => {
         apiToken: randomstring.generate()
       });
       if (user) {
-        mailer.sendMail(
+        sendMail(
           req.body.email,
           process.env.EMAIL_FROM_ADDRESS,
           'Node App Signin',

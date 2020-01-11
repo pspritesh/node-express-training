@@ -6,7 +6,7 @@ const datetime = require('node-datetime');
 const PDFDocument = require('pdfkit');
 const randomstring = require('randomstring');
 
-const mailer = require('../config/mailer');
+const { sendMail } = require('../config/mailer');
 const { model } = require('../helpers/sequelizeHelper');
 const { responseObj } = require('../helpers/utilsHelper');
 
@@ -82,7 +82,7 @@ exports.addUser = async (req, res) => {
           lname: req.body.lname
         });
         if (profile) {
-          mailer.sendMail(
+          sendMail(
             req.body.email,
             process.env.EMAIL_FROM_ADDRESS,
             'Node App Signin',
