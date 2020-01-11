@@ -30,6 +30,8 @@ exports.getUsers = async (req, res) => {
       page: req.query.page ? req.query.page : 1,     // Default 1
       paginate: 4                                    // Default 25
     });
+    users.page = req.query.page ? req.query.page : 1;
+    users.limit = 4;
     if (users) {
       return res.json(responseObj(null, true, users, true));
     } else {
@@ -179,6 +181,8 @@ exports.getAllProducts = async (req, res) => {
       page: req.query.page ? req.query.page : 1,
       paginate: 4
     });
+    products.page = req.query.page ? req.query.page : 1;
+    products.limit = 4;
     return res.json(responseObj(null, true, products, true));
   } catch (error) {
     console.error(error);
