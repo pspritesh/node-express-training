@@ -1,5 +1,5 @@
 /**
- * @param {Boolean} errMsg
+ * @param {String or Array} errMsg
  * @param {Boolean} successStatus
  * @param {Array or Object} data
  * @param {Boolean} paginated
