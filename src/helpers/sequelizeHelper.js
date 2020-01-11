@@ -3,6 +3,7 @@ exports.model = (model) => {
 }
 
 exports.configRelations = () => {
+  // Sequelize One-To-One relationship
   this.model('User').hasOne(this.model('Profile'));
   this.model('Profile').belongsTo(this.model('User'), {constraints: true, onDelete: 'CASCADE'});
 
