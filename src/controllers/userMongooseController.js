@@ -22,8 +22,8 @@ exports.getUsers = async (req, res) => {
         }
       },
       { $unwind: {
-        'path': '$products',
-        'preserveNullAndEmptyArrays': true
+        path: '$products',
+        preserveNullAndEmptyArrays: true
       } },
       { $group: {
         _id: '$_id',
@@ -72,8 +72,8 @@ exports.getUser = async (req, res) => {
         }
       },
       { $unwind: {
-        'path': '$products',
-        'preserveNullAndEmptyArrays': true
+        path: '$products',
+        preserveNullAndEmptyArrays: true
       } },
       { $group: {
         _id: '$_id',
